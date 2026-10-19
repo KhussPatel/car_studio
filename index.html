@@ -1,0 +1,2533 @@
+<!DOCTYPE html>
+<html lang="gu" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Auto Studio | Admin, Intake, Kanban & GST Billing</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+            },
+            surface: {
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+              600: '#475569'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* Custom scrollbar for Kanban board and app */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .dark ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* Print Styles for Tax Invoice & Studio Gate Pass */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printableInvoice, #printableInvoice * {
+        visibility: visible !important;
+      }
+      #printableInvoice {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100vw !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        padding: 24px !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        z-index: 999999 !important;
+        display: block !important;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen antialiased flex flex-col justify-between selection:bg-amber-500 selection:text-black transition-colors duration-150">
+
+  <!-- ==================== 1. LOGIN VIEW ==================== -->
+  <div id="loginSection" class="min-h-screen flex items-center justify-center p-4 relative">
+    <!-- Top-Right Theme Toggle for Login Screen -->
+    <div class="absolute top-5 right-5 z-20">
+      <button id="btnThemeToggleLogin" onclick="toggleTheme()" title="Switch Theme" aria-label="Toggle Theme"
+        class="p-2.5 text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 bg-white/90 dark:bg-surface-800/90 hover:bg-slate-100 dark:hover:bg-surface-700/60 border border-slate-200 dark:border-slate-700/70 rounded-xl transition duration-200 shadow-md cursor-pointer flex items-center justify-center">
+        <i data-lucide="sun" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i>
+      </button>
+    </div>
+
+    <div class="w-full max-w-md bg-white/95 dark:bg-surface-800/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 p-8 rounded-2xl shadow-2xl relative overflow-hidden transition-colors">
+      <div class="absolute -top-12 -right-12 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl"></div>
+
+      <div class="text-center mb-8">
+        <div class="inline-flex p-3 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 mb-3">
+          <i data-lucide="shield-check" class="w-8 h-8"></i>
+        </div>
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Apex Auto Studio</h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wider font-semibold">Studio Billing, Flow & Gate Pass</p>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Username / Admin ID</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="username" required value="admin"
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500 transition text-slate-900 dark:text-white" placeholder="admin">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Password</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </span>
+            <input type="password" id="password" required value="admin123"
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500 transition text-slate-900 dark:text-white" placeholder="••••••••">
+          </div>
+        </div>
+
+        <div id="loginError" class="hidden text-xs text-rose-500 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 rounded-lg p-2.5 text-center font-medium">
+          ખોટો યુઝરનેમ અથવા પાસવર્ડ!
+        </div>
+
+        <button type="submit" 
+          class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold rounded-xl transition duration-200 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer">
+          <span>Login to Console</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <div class="mt-6 text-center text-xs text-slate-500 border-t border-slate-200 dark:border-slate-700/50 pt-4">
+        Default: <span class="text-slate-700 dark:text-slate-300 font-mono font-semibold">admin</span> / <span class="text-slate-700 dark:text-slate-300 font-mono font-semibold">admin123</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. MAIN APP VIEW ==================== -->
+  <div id="appSection" class="hidden min-h-screen flex flex-col">
+    
+    <!-- Top Navigation Bar -->
+    <header class="bg-white/95 dark:bg-surface-800/90 backdrop-blur border-b border-slate-200 dark:border-slate-700/70 sticky top-0 z-40 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 transition-colors shadow-sm dark:shadow-none">
+      <!-- Left: Studio Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black shadow-md shadow-amber-500/20 shrink-0">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="font-extrabold text-base tracking-tight leading-none text-slate-900 dark:text-white">Apex Auto Studio</h2>
+          <span class="text-[11px] text-amber-600 dark:text-amber-500 font-semibold">Rajkot Branch • Detailing & PPF Bay</span>
+        </div>
+      </div>
+
+      <!-- Center: Tab Navigation (Dashboard vs Live Workshop Kanban) -->
+      <nav class="flex items-center bg-slate-100 dark:bg-surface-900/90 p-1 rounded-xl border border-slate-200 dark:border-slate-700/80 order-3 sm:order-2 w-full sm:w-auto justify-center transition-colors">
+        <button id="navDashboard" onclick="switchTab('dashboard')" 
+          class="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard Overview</span>
+        </button>
+        <button id="navKanban" onclick="switchTab('kanban')" 
+          class="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+          <i data-lucide="kanban" class="w-4 h-4"></i>
+          <span>Live Workshop (Kanban)</span>
+          <span id="navKanbanCount" class="bg-amber-500/20 text-amber-700 dark:text-amber-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold">0</span>
+        </button>
+      </nav>
+
+      <!-- Right: Action CTA, Theme Toggle & Admin User -->
+      <div class="flex items-center gap-2 sm:gap-2.5 order-2 sm:order-3">
+        <!-- New Vehicle Intake Button (Accessible across both views) -->
+        <button id="btnIntakeTrigger" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition cursor-pointer shrink-0">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span class="hidden md:inline">New Vehicle Intake</span>
+          <span class="md:hidden">Intake</span>
+        </button>
+
+        <!-- Dynamic Light / Dark Theme Toggle Button -->
+        <button id="btnThemeToggle" onclick="toggleTheme()" title="Switch to Light Mode" aria-label="Toggle Light / Dark Mode"
+          class="p-2 text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 bg-slate-100 dark:bg-surface-900/80 hover:bg-slate-200 dark:hover:bg-surface-700/60 border border-slate-200 dark:border-slate-700/70 rounded-xl transition duration-200 cursor-pointer flex items-center justify-center shrink-0">
+          <i id="themeToggleIcon" data-lucide="sun" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i>
+        </button>
+
+        <!-- Logout & User Profile -->
+        <div class="flex items-center pl-2 sm:pl-3 border-l border-slate-200 dark:border-slate-700 gap-2 sm:gap-3">
+          <div class="text-right hidden lg:block">
+            <p class="text-xs font-semibold leading-none text-slate-800 dark:text-slate-200">Admin</p>
+            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Super Admin</span>
+          </div>
+          <button id="btnLogout" title="Logout" class="p-2 text-slate-500 dark:text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-surface-700/50 rounded-xl transition cursor-pointer">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
+      
+      <!-- ==================== VIEW A: DASHBOARD OVERVIEW ==================== -->
+      <div id="viewDashboard" class="space-y-6">
+        
+        <!-- Welcome Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              Studio Dashboard 
+              <span class="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-semibold">Live System</span>
+            </h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">આજના જોબ્સ, સ્ટેજ પ્રોગ્રેસ, ફાઇનલ બિલિંગ અને લાઈવ વાહનોની સ્થિતિ.</p>
+          </div>
+          <div class="flex items-center gap-2 bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs text-slate-700 dark:text-slate-300 self-start sm:self-auto shadow-sm dark:shadow-none">
+            <i data-lucide="calendar" class="w-4 h-4 text-amber-500"></i>
+            <span id="currentDateDisplay">--</span>
+          </div>
+        </div>
+
+        <!-- 4 Core Metric Cards (KPIs) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Revenue Card -->
+          <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
+            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">કુલ અંદાજિત આવક</span>
+              <div class="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+                <i data-lucide="indian-rupee" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white" id="statRevenue">₹0</div>
+            <div class="mt-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">સક્રિય & ડિલિવર્ડ જોબ્સ આધારિત</div>
+          </div>
+
+          <!-- In-Shop Cars -->
+          <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
+            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">હાલ સ્ટુડિયોમાં (In-Shop)</span>
+              <div class="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
+                <i data-lucide="car" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white" id="statInShop">0</div>
+            <div class="mt-2 text-[11px] text-amber-600 dark:text-amber-400 font-medium">વર્કશોપ ફ્લોર પર સક્રિય વાહનો</div>
+          </div>
+
+          <!-- Completed Today -->
+          <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
+            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">કમ્પ્લીટ થયેલ (Ready / Closed)</span>
+              <div class="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white" id="statCompleted">0</div>
+            <div class="mt-2 text-[11px] text-blue-600 dark:text-blue-400 font-medium">ડિલિવરી રેડી & ડિલિવર્ડ ગેટ પાસ</div>
+          </div>
+
+          <!-- Advance & Collected -->
+          <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
+            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">કુલ વસૂલાત (Collected)</span>
+              <div class="p-2 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-xl">
+                <i data-lucide="wallet" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-purple-600 dark:text-purple-400" id="statAdvance">₹0</div>
+            <div class="mt-2 text-[11px] text-rose-500 font-semibold" id="statPendingDueText">બાકી રકમ: ₹0</div>
+          </div>
+        </div>
+
+        <!-- Workshop Stage Progress Overview Bar (Floor Pipeline) -->
+        <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 rounded-2xl p-5 space-y-4 shadow-sm dark:shadow-none transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                <i data-lucide="activity" class="w-4 h-4 text-amber-500"></i>
+                લાઇવ વર્કશોપ સ્ટેજ પ્રોગ્રેસ (Floor Pipeline Overview)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">દરેક સ્ટેજમાં રહેલી કાર્સનું રીઅલ-ટાઇમ વિશ્લેષણ</p>
+            </div>
+            <button onclick="switchTab('kanban')" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition font-semibold self-start sm:self-auto cursor-pointer">
+              <span>Open Live Kanban</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Multi-segment Colored Progress Bar -->
+          <div class="w-full bg-slate-200 dark:bg-surface-900 rounded-full h-3.5 flex overflow-hidden p-0.5 border border-slate-300 dark:border-slate-700/60" id="stageProgressBar">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- 4 Stage Breakdown Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-1" id="stageStatCards">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Main Data Table: Live Vehicles & Archive -->
+        <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 rounded-2xl p-5 shadow-sm dark:shadow-none transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-slate-900 dark:text-white text-base" id="dashboardTableTitle">હાલ વર્કશોપમાં રહેલી કાર્સ (Live Floor Table)</h3>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400" id="dashboardTableSubtitle">શોરૂમથી આવેલી નવી અનરજિસ્ટર્ડ (Temp ID) અને રેગ્યુલર કાર્સનું લાઈવ લિસ્ટ</p>
+            </div>
+
+            <!-- Table Filters: Active Floor vs Delivered Archive -->
+            <div class="flex items-center gap-2 self-start sm:self-auto">
+              <div class="flex items-center bg-slate-100 dark:bg-surface-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+                <button id="btnFilterActiveFloor" onclick="setDashboardTableFilter('active')" class="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold transition">
+                  સક્રિય ફ્લોર (<span id="countActiveFilter">0</span>)
+                </button>
+                <button id="btnFilterDelivered" onclick="setDashboardTableFilter('delivered')" class="px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+                  ડિલિવરી આર્કાઇવ (<span id="countDeliveredFilter">0</span>)
+                </button>
+              </div>
+
+              <button onclick="renderAll()" class="p-2 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl transition cursor-pointer" title="Refresh Table">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700/80">
+                  <th class="pb-3 font-semibold">વાહન નંબર / Temp ID</th>
+                  <th class="pb-3 font-semibold">કાર મોડેલ & ગ્રાહક</th>
+                  <th class="pb-3 font-semibold">સર્વિસ</th>
+                  <th class="pb-3 font-semibold">પ્રી-ઇન્સ્પેક્શન</th>
+                  <th class="pb-3 font-semibold">વર્કશોપ સ્ટેજ / સ્થિતિ</th>
+                  <th class="pb-3 font-semibold text-right">બિલ રકમ / પેમેન્ટ</th>
+                  <th class="pb-3 font-semibold text-center">એક્શન</th>
+                </tr>
+              </thead>
+              <tbody id="vehicleTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-700 dark:text-slate-300">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== VIEW B: LIVE WORKSHOP (KANBAN BOARD) ==================== -->
+      <div id="viewKanban" class="hidden space-y-6">
+        
+        <!-- Kanban Top Action Bar -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              લાઇવ વર્કશોપ ફ્લોર (Interactive Kanban)
+              <span class="text-xs bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                Floor Tracker
+              </span>
+            </h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              દરેક સ્ટેજ પર કાર્સને ટ્રેક કરો, સ્ટેજ અપડેટ કરો અને Stage 4 થી સીધું GST બિલ & ગેટ પાસ જનરેટ કરો.
+            </p>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
+                <i data-lucide="search" class="w-3.5 h-3.5"></i>
+              </span>
+              <input type="text" id="kanbanSearchInput" placeholder="શોધો (નંબર, મોડેલ, ગ્રાહક)..." 
+                oninput="renderKanban()"
+                class="pl-9 pr-3 py-1.5 bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-amber-500 transition w-56 sm:w-64 shadow-sm dark:shadow-none">
+            </div>
+
+            <!-- Quick Add Vehicle Button inside Kanban -->
+            <button onclick="document.getElementById('btnIntakeTrigger').click()" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>New Intake</span>
+            </button>
+
+            <!-- Refresh Board -->
+            <button onclick="renderAll()" class="p-2 bg-white dark:bg-surface-800 hover:bg-slate-100 dark:hover:bg-surface-700 text-slate-600 dark:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-700 transition cursor-pointer shadow-sm dark:shadow-none" title="Refresh Board">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Kanban Stage Columns Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start" id="kanbanColumnsContainer">
+          <!-- Dynamically populated with 4 stage columns -->
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-surface-900/50 py-3.5 px-6 text-center text-xs text-slate-500 transition-colors">
+      Apex Car Detailing Studio Management Suite • Interactive Kanban, GST Billing & Gate Pass Engine
+    </footer>
+  </div>
+
+  <!-- ==================== 3. INTAKE & PRE-INSPECTION MODAL ==================== -->
+  <div id="intakeModal" class="hidden fixed inset-0 z-50 bg-black/75 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col text-slate-800 dark:text-slate-100 transition-colors">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/80 flex items-center justify-between bg-slate-50 dark:bg-surface-900/80 sticky top-0 z-10">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="clipboard-pen" class="w-5 h-5 text-amber-500"></i>
+            નવું વાહન ઇનટેક & પ્રી-ઇન્સ્પેક્શન
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">ગાડી સ્ટુડિયોમાં આવે ત્યારે કસ્ટમર ડિટેલ્સ અને સ્ક્રેચ/ડેન્ટ લોગ કરો</p>
+        </div>
+        <button id="btnCloseModal" type="button" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 space-y-6 overflow-y-auto text-xs">
+        
+        <!-- Part 1: Vehicle Type Selection (Regular vs Showroom Delivery) -->
+        <div class="bg-slate-50 dark:bg-surface-900/70 p-4 rounded-xl border border-slate-200 dark:border-slate-700/60">
+          <label class="block text-slate-800 dark:text-slate-300 font-semibold mb-2.5">વાહનનો પ્રકાર પસંદ કરો</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label id="lblRegCar" class="flex items-center gap-3 p-3 rounded-xl border border-amber-500/50 bg-amber-500/10 cursor-pointer transition">
+              <input type="radio" name="vehicleType" value="registered" checked class="text-amber-500 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-slate-900 dark:text-slate-100 text-sm">જૂની / રજિસ્ટર્ડ કાર</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">નંબર પ્લેટ હાજર છે (દા.ત. GJ-03-XX-0000)</div>
+              </div>
+            </label>
+
+            <label id="lblNewCar" class="flex items-center gap-3 p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-surface-800 cursor-pointer transition">
+              <input type="radio" name="vehicleType" value="unregistered" class="text-amber-500 focus:ring-amber-500">
+              <div>
+                <div class="font-bold text-purple-700 dark:text-purple-300 text-sm flex items-center gap-1.5">
+                  <span>શોરૂમ ડિલિવરી (New Car)</span>
+                  <span class="text-[9px] bg-purple-500/20 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded font-mono font-bold">No Plate</span>
+                </div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">સિસ્ટમ Temp ID આપશે + ચેસિસ નંબર</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Part 2: Customer & Vehicle Information Form -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <!-- Registration Number Field -->
+          <div id="boxRegNo">
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">ગાડીનો નંબર (RTO Number) *</label>
+            <input type="text" id="inputRegNo" placeholder="GJ-03-AB-1234" 
+              class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-mono uppercase focus:border-amber-500 outline-none">
+          </div>
+
+          <!-- Temp ID Field -->
+          <div id="boxTempId" class="hidden">
+            <label class="block text-purple-700 dark:text-purple-300 font-medium mb-1.5">Auto Temp ID</label>
+            <input type="text" id="inputTempId" readonly 
+              class="w-full bg-purple-50 dark:bg-purple-950/30 border border-purple-300 dark:border-purple-500/40 rounded-xl px-3.5 py-2.5 text-purple-700 dark:text-purple-300 font-mono font-bold outline-none cursor-not-allowed">
+          </div>
+
+          <!-- Chassis Number Field -->
+          <div id="boxChassis" class="hidden">
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">ચેસિસ લાસ્ટ ૬ ડિજિટ *</label>
+            <input type="text" id="inputChassis" maxlength="6" placeholder="દા.ત. 491029" 
+              class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-mono uppercase focus:border-amber-500 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">કાર કંપની & મોડેલ *</label>
+            <input type="text" id="inputCarModel" placeholder="દા.ત. Hyundai Creta, Thar" 
+              class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:border-amber-500 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">કાર કેટેગરી (Size) *</label>
+            <select id="selectCategory" class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:border-amber-500 outline-none">
+              <option value="Hatchback">Hatchback (Swift, i20)</option>
+              <option value="Sedan">Sedan (City, Verna, Slavia)</option>
+              <option value="Compact SUV" selected>Compact SUV (Creta, Seltos, Nexon)</option>
+              <option value="Full SUV">Full SUV (XUV700, Fortuner, Safari)</option>
+              <option value="Luxury">Luxury / Exotic (BMW, Merc, Audi)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">કસ્ટમરનું નામ *</label>
+            <input type="text" id="inputCustName" placeholder="દા.ત. રાજેશભાઈ પટેલ" 
+              class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:border-amber-500 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">મોબાઈલ નંબર (WhatsApp) *</label>
+            <input type="tel" id="inputCustPhone" maxlength="10" placeholder="98240XXXXX" 
+              class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-mono focus:border-amber-500 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">પ્રાથમિક સર્વિસ *</label>
+            <select id="selectService" class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white focus:border-amber-500 outline-none">
+              <option value="Full Body TPU PPF">Full Body TPU PPF (Paint Protection)</option>
+              <option value="9H Ceramic Coating (3 Yrs)">9H Ceramic Coating (3 Yrs)</option>
+              <option value="10H Graphene Coating (5 Yrs)">10H Graphene Coating (5 Yrs)</option>
+              <option value="3-Stage Paint Correction & Polish">3-Stage Paint Correction & Polish</option>
+              <option value="Interior Deep Cleaning + Spa">Interior Deep Cleaning + Spa</option>
+              <option value="Foam Wash & Underbody Coat">Foam Wash & Underbody Coat</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">કુલ અંદાજિત રકમ (₹) *</label>
+            <input type="number" id="inputTotalAmount" placeholder="15000" value="15000"
+              class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-mono focus:border-amber-500 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5">એડવાન્સ જમા લીધેલ રકમ (₹)</label>
+            <input type="number" id="inputAdvanceAmount" placeholder="5000" value="5000"
+              class="w-full bg-white dark:bg-surface-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-mono focus:border-amber-500 outline-none">
+          </div>
+        </div>
+
+        <!-- Part 3: Digital Visual Inspection (Damage/Scratch Logger) -->
+        <div class="border border-slate-200 dark:border-slate-700/70 rounded-2xl p-4 bg-slate-50/70 dark:bg-surface-900/40">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-1.5">
+                <i data-lucide="scan" class="w-4 h-4 text-amber-500"></i>
+                ડિજિટલ પ્રી-ઇન્સ્પેક્શન (કાર પર પહેલાથી પડેલા સ્ક્રેચ/ડેન્ટ)
+              </h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">જે ભાગ પર સ્ક્રેચ કે ડેન્ટ હોય તેના પર ક્લિક કરીને ટેગ એડ કરો</p>
+            </div>
+            <span class="text-[10px] bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-semibold">
+              ગ્રાહક વિવાદ અટકાવવા જરૂરી
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <!-- Zones 1 to 6 -->
+            <div class="p-3 bg-white dark:bg-surface-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span class="font-semibold text-slate-800 dark:text-slate-200 block mb-2">૧. Front Bumper / Grill</span>
+              <div class="flex flex-wrap gap-1.5 zone-tags" data-zone="Front Bumper">
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Scratch</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Dent</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Paint Chip</button>
+              </div>
+            </div>
+
+            <div class="p-3 bg-white dark:bg-surface-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span class="font-semibold text-slate-800 dark:text-slate-200 block mb-2">૨. Bonnet & Windshield</span>
+              <div class="flex flex-wrap gap-1.5 zone-tags" data-zone="Bonnet">
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Scratch</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Stone Chip</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Glass Crack</button>
+              </div>
+            </div>
+
+            <div class="p-3 bg-white dark:bg-surface-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span class="font-semibold text-slate-800 dark:text-slate-200 block mb-2">૩. Right Side (Driver Side)</span>
+              <div class="flex flex-wrap gap-1.5 zone-tags" data-zone="Driver Side">
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Door Dent</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Running Board Scuff</button>
+              </div>
+            </div>
+
+            <div class="p-3 bg-white dark:bg-surface-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span class="font-semibold text-slate-800 dark:text-slate-200 block mb-2">૪. Left Side (Passenger)</span>
+              <div class="flex flex-wrap gap-1.5 zone-tags" data-zone="Passenger Side">
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Fender Dent</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Deep Scratch</button>
+              </div>
+            </div>
+
+            <div class="p-3 bg-white dark:bg-surface-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span class="font-semibold text-slate-800 dark:text-slate-200 block mb-2">૫. Rear Bumper & Boot</span>
+              <div class="flex flex-wrap gap-1.5 zone-tags" data-zone="Rear Boot">
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Boot Scratch</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Rear Dent</button>
+              </div>
+            </div>
+
+            <div class="p-3 bg-white dark:bg-surface-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span class="font-semibold text-slate-800 dark:text-slate-200 block mb-2">૬. Roof & Sunroof</span>
+              <div class="flex flex-wrap gap-1.5 zone-tags" data-zone="Roof">
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Bird Dropping Stain</button>
+                <button type="button" class="btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer">Water Spotting</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selected Flaws summary -->
+          <div class="mt-3 text-[11px] text-slate-500 dark:text-slate-400 bg-white dark:bg-surface-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-2">
+            <span class="font-bold text-amber-600 dark:text-amber-500">નોંધાયેલા ખામીઓ:</span>
+            <span id="flawSummaryText" class="text-slate-700 dark:text-slate-300">કોઈ સ્ક્રેચ/ડેન્ટ સિલેક્ટ કરેલ નથી (Clean Body)</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer Actions -->
+      <div class="px-6 py-4 bg-slate-50 dark:bg-surface-900/80 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between sticky bottom-0">
+        <button id="btnCancelModal" type="button" class="px-4 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl text-xs transition cursor-pointer">
+          રદ્દ કરો (Cancel)
+        </button>
+
+        <button id="btnSaveVehicle" type="button" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>ઇનટેક કન્ફર્મ કરો & જોબ શરૂ કરો</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 4. INSPECTION & VEHICLE DETAILS MODAL ==================== -->
+  <div id="detailsModal" class="hidden fixed inset-0 z-50 bg-black/75 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col text-slate-800 dark:text-slate-100 transition-colors">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/80 flex items-center justify-between bg-slate-50 dark:bg-surface-900/90 sticky top-0 z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+            <i data-lucide="scan" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2" id="detailModalTitle">
+              વાહન & પ્રી-ઇન્સ્પેક્શન વિગતો
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400" id="detailModalSubtitle">Vehicle Inspection & Studio Job Sheet</p>
+          </div>
+        </div>
+        <button onclick="closeDetailsModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 space-y-4 overflow-y-auto text-xs" id="detailModalContent">
+        <!-- Dynamically injected -->
+      </div>
+
+      <!-- Modal Footer (Stage navigation & close) -->
+      <div class="px-6 py-3.5 bg-slate-50 dark:bg-surface-900/90 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between sticky bottom-0" id="detailModalFooter">
+        <!-- Dynamically injected -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 5. CHECKOUT, GST INVOICING & GATE PASS MODAL ==================== -->
+  <div id="checkoutModal" class="hidden fixed inset-0 z-50 bg-black/80 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[94vh] flex flex-col text-slate-800 dark:text-slate-100 transition-colors">
+      
+      <!-- Checkout Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/80 flex items-center justify-between bg-slate-50 dark:bg-surface-900/90 sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+            <i data-lucide="receipt" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              ફાઇનલ ચેકઆઉટ & GST બિલિંગ
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono font-bold">Gate Pass Engine</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Tax Invoice, RTO Plate Update, Gate Pass & WhatsApp Notification</p>
+          </div>
+        </div>
+        <button onclick="closeCheckoutModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Checkout Body (Scrollable) -->
+      <div class="p-6 space-y-5 overflow-y-auto text-xs" id="checkoutModalBody">
+        <!-- Dynamically injected -->
+      </div>
+
+      <!-- Checkout Footer Actions -->
+      <div class="px-6 py-3.5 bg-slate-50 dark:bg-surface-900/95 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 sticky bottom-0" id="checkoutModalFooter">
+        <!-- Dynamically injected -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 6. PRINTABLE TAX INVOICE & GATE PASS (Hidden on screen, shown in Print) ==================== -->
+  <div id="printableInvoice" class="hidden bg-white text-slate-900 font-sans p-8 leading-tight">
+    <!-- Populated dynamically via printInvoiceGatePass() -->
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // 0. Dynamic Light / Dark Theme Management
+    function initTheme() {
+      const savedTheme = localStorage.getItem('apex_theme') || 'dark';
+      applyTheme(savedTheme);
+    }
+
+    function applyTheme(theme) {
+      const htmlEl = document.documentElement;
+      const toggleBtn = document.getElementById('btnThemeToggle');
+      const toggleBtnLogin = document.getElementById('btnThemeToggleLogin');
+
+      if (theme === 'light') {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('apex_theme', 'light');
+        if (toggleBtn) {
+          toggleBtn.title = "Switch to Dark Mode";
+          toggleBtn.innerHTML = '<i data-lucide="moon" class="w-4 h-4 text-slate-700"></i>';
+        }
+        if (toggleBtnLogin) {
+          toggleBtnLogin.title = "Switch to Dark Mode";
+          toggleBtnLogin.innerHTML = '<i data-lucide="moon" class="w-4 h-4 text-slate-700"></i>';
+        }
+      } else {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('apex_theme', 'dark');
+        if (toggleBtn) {
+          toggleBtn.title = "Switch to Light Mode";
+          toggleBtn.innerHTML = '<i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>';
+        }
+        if (toggleBtnLogin) {
+          toggleBtnLogin.title = "Switch to Light Mode";
+          toggleBtnLogin.innerHTML = '<i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>';
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    }
+
+    // 1. Stage Configuration (4 Distinct Stages)
+    const STAGES = [
+      {
+        id: "stage-1",
+        key: "washing",
+        title: "૧. વોશિંગ & ડીકોન્ટેમિનેશન",
+        subtitle: "Washing & Decontamination",
+        badge: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20 dark:border-blue-500/30",
+        headerColor: "border-blue-500",
+        dotColor: "bg-blue-500 dark:bg-blue-400",
+        icon: "droplets"
+      },
+      {
+        id: "stage-2",
+        key: "paint_correction",
+        title: "૨. પેઇન્ટ કરેક્શન / પોલિશ",
+        subtitle: "Paint Correction & Rubbing",
+        badge: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 dark:border-amber-500/30",
+        headerColor: "border-amber-500",
+        dotColor: "bg-amber-500 dark:bg-amber-400",
+        icon: "sparkles"
+      },
+      {
+        id: "stage-3",
+        key: "ceramic_ppf",
+        title: "૩. સિરામિક / PPF એપ્લિકેશન",
+        subtitle: "Ceramic / PPF Clean Bay",
+        badge: "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20 dark:border-purple-500/30",
+        headerColor: "border-purple-500",
+        dotColor: "bg-purple-500 dark:bg-purple-400",
+        icon: "shield"
+      },
+      {
+        id: "stage-4",
+        key: "final_qc",
+        title: "૪. ફાઇનલ QC & ડિલિવરી રેડી",
+        subtitle: "Final QC & Ready for Delivery",
+        badge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30",
+        headerColor: "border-emerald-500",
+        dotColor: "bg-emerald-500 dark:bg-emerald-400",
+        icon: "check-circle-2"
+      }
+    ];
+
+    // Helper: Normalize stage index (0-3)
+    function getStageIndex(car) {
+      if (typeof car.stageIndex === 'number' && car.stageIndex >= 0 && car.stageIndex < STAGES.length) {
+        return car.stageIndex;
+      }
+      const s = (car.stage || '').toLowerCase();
+      if (s.includes('વોશિંગ') || s.includes('wash') || s.includes('prep') || s.includes('decon')) return 0;
+      if (s.includes('પેઇન્ટ') || s.includes('paint') || s.includes('rubbing') || s.includes('polish')) return 1;
+      if (s.includes('સિરામિક') || s.includes('ceramic') || s.includes('ppf')) return 2;
+      if (s.includes('ડિલિવરી') || s.includes('delivery') || s.includes('qc') || s.includes('ready')) return 3;
+      return 0; // default to stage 1 (Washing)
+    }
+
+    // Helper: Migrate existing localStorage data to standard stage schema
+    function migrateVehicleData(vehicles) {
+      let changed = false;
+      vehicles.forEach(car => {
+        const idx = getStageIndex(car);
+        if (car.stageIndex !== idx || car.stage !== STAGES[idx].title || !car.stageBadge) {
+          car.stageIndex = idx;
+          car.stage = STAGES[idx].title;
+          car.stageBadge = STAGES[idx].badge;
+          changed = true;
+        }
+        if (!car.customerPhone) {
+          car.customerPhone = car.isNewCar ? "9426098765" : "9825012345";
+          changed = true;
+        }
+        if (typeof car.isDelivered !== 'boolean') {
+          car.isDelivered = false;
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('apex_vehicles', JSON.stringify(vehicles));
+      }
+      return vehicles;
+    }
+
+    // Initial Mock Data
+    const initialVehicles = [
+      {
+        id: "JOB-101",
+        isNewCar: false,
+        regNo: "GJ-03-ER-4491",
+        model: "Mahindra XUV700",
+        category: "Full SUV",
+        customerName: "રાજેશભાઈ પટેલ",
+        customerPhone: "9825012345",
+        service: "Full Body TPU PPF",
+        stageIndex: 2,
+        stage: "૩. સિરામિક / PPF એપ્લિકેશન",
+        stageBadge: "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20 dark:border-purple-500/30",
+        flaws: ["Front Bumper: Scratch", "Driver Side: Door Dent"],
+        amountTotal: 85000,
+        amountAdvance: 40000,
+        isDelivered: false
+      },
+      {
+        id: "JOB-102",
+        isNewCar: true,
+        tempId: "TEMP-2026-041",
+        chassisLast6: "782190",
+        model: "Hyundai Creta",
+        category: "Compact SUV",
+        customerName: "હાર્દિક વઘાસીયા",
+        customerPhone: "9426098765",
+        service: "9H Ceramic Coating (3 Yrs)",
+        stageIndex: 3,
+        stage: "૪. ફાઇનલ QC & ડિલિવરી રેડી",
+        stageBadge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30",
+        flaws: [],
+        amountTotal: 24000,
+        amountAdvance: 10000,
+        isDelivered: false
+      }
+    ];
+
+    // Initialize LocalStorage if empty
+    if (!localStorage.getItem('apex_vehicles')) {
+      localStorage.setItem('apex_vehicles', JSON.stringify(initialVehicles));
+    } else {
+      try {
+        const raw = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+        migrateVehicleData(raw);
+      } catch (e) {
+        localStorage.setItem('apex_vehicles', JSON.stringify(initialVehicles));
+      }
+    }
+
+    // 2. Authentication Handling
+    const loginSection = document.getElementById('loginSection');
+    const appSection = document.getElementById('appSection');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const btnLogout = document.getElementById('btnLogout');
+
+    function checkAuth() {
+      const isAuth = sessionStorage.getItem('apex_auth') === 'true';
+      if (isAuth) {
+        loginSection.classList.add('hidden');
+        appSection.classList.remove('hidden');
+        
+        // Restore active tab
+        const savedTab = sessionStorage.getItem('apex_active_tab') || 'dashboard';
+        switchTab(savedTab);
+        renderAll();
+      } else {
+        loginSection.classList.remove('hidden');
+        appSection.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
+
+      if (u === 'admin' && p === 'admin123') {
+        sessionStorage.setItem('apex_auth', 'true');
+        loginError.classList.add('hidden');
+        checkAuth();
+      } else {
+        loginError.classList.remove('hidden');
+      }
+    });
+
+    btnLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('apex_auth');
+      checkAuth();
+    });
+
+    // 3. Navigation & Tab Switching
+    function switchTab(tabName) {
+      sessionStorage.setItem('apex_active_tab', tabName);
+      const viewDashboard = document.getElementById('viewDashboard');
+      const viewKanban = document.getElementById('viewKanban');
+      const navDashboard = document.getElementById('navDashboard');
+      const navKanban = document.getElementById('navKanban');
+
+      if (tabName === 'kanban') {
+        viewDashboard.classList.add('hidden');
+        viewKanban.classList.remove('hidden');
+
+        navKanban.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20';
+        navDashboard.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+        
+        renderKanban();
+      } else {
+        viewKanban.classList.add('hidden');
+        viewDashboard.classList.remove('hidden');
+
+        navDashboard.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20';
+        navKanban.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+
+        renderDashboard();
+      }
+      lucide.createIcons();
+    }
+
+    // Dashboard Table Filter (Active vs Delivered Archive)
+    let currentDashboardTableFilter = 'active';
+
+    function setDashboardTableFilter(filter) {
+      currentDashboardTableFilter = filter;
+      const btnActive = document.getElementById('btnFilterActiveFloor');
+      const btnDelivered = document.getElementById('btnFilterDelivered');
+      const title = document.getElementById('dashboardTableTitle');
+      const subtitle = document.getElementById('dashboardTableSubtitle');
+
+      if (filter === 'delivered') {
+        btnDelivered.className = 'px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold transition';
+        btnActive.className = 'px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+        title.textContent = 'ડિલિવરી થયેલ વાહનોનું આર્કાઇવ (Delivered & Closed Jobs)';
+        subtitle.textContent = 'સંપૂર્ણ બિલિંગ ચૂકવાઈ ગયેલા, ઇન્વોઇસ બનેલા અને ગેટ પાસ ઇશ્યૂ થયેલ વાહનો';
+      } else {
+        btnActive.className = 'px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold transition';
+        btnDelivered.className = 'px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+        title.textContent = 'હાલ વર્કશોપમાં રહેલી કાર્સ (Live Floor Table)';
+        subtitle.textContent = 'શોરૂમથી આવેલી નવી અનરજિસ્ટર્ડ (Temp ID) અને રેગ્યુલર કાર્સનું લાઈવ લિસ્ટ';
+      }
+      renderDashboard();
+    }
+
+    // 4. Render Dashboard Table & Metrics
+    function renderDashboard() {
+      const now = new Date();
+      document.getElementById('currentDateDisplay').textContent = now.toLocaleDateString('gu-IN', {
+        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+      });
+
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const tbody = document.getElementById('vehicleTableBody');
+      tbody.innerHTML = '';
+
+      let totalRev = 0;
+      let totalCollected = 0;
+      let inShopCount = 0;
+      let completedCount = 0;
+
+      const activeVehicles = [];
+      const deliveredVehicles = [];
+
+      // Count per stage for active in-shop cars
+      const stageCounts = [0, 0, 0, 0];
+
+      vehicles.forEach(car => {
+        if (car.isDelivered) {
+          deliveredVehicles.push(car);
+          completedCount++;
+          const finalAmt = Number(car.billingDetails?.grandTotal || car.amountTotal || 0);
+          totalRev += finalAmt;
+          totalCollected += finalAmt; // fully settled
+        } else {
+          activeVehicles.push(car);
+          inShopCount++;
+          const estAmt = Number(car.amountTotal || 0);
+          const advAmt = Number(car.amountAdvance || 0);
+          totalRev += estAmt;
+          totalCollected += advAmt;
+
+          const sIdx = getStageIndex(car);
+          stageCounts[sIdx]++;
+          if (sIdx === 3) completedCount++;
+        }
+      });
+
+      const pendingDue = Math.max(0, totalRev - totalCollected);
+
+      // Update Filter counts
+      document.getElementById('countActiveFilter').textContent = activeVehicles.length;
+      document.getElementById('countDeliveredFilter').textContent = deliveredVehicles.length;
+
+      // Select list to display based on current filter
+      const displayVehicles = currentDashboardTableFilter === 'delivered' ? deliveredVehicles : activeVehicles;
+
+      if (displayVehicles.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-slate-400 dark:text-slate-500">
+              <div class="flex flex-col items-center justify-center">
+                <i data-lucide="inbox" class="w-8 h-8 text-slate-300 dark:text-slate-600 mb-2"></i>
+                <span class="text-xs font-semibold">${currentDashboardTableFilter === 'delivered' ? 'હજુ કોઈ ડિલિવરી રેકોર્ડ નથી.' : 'હાલ વર્કશોપ ફ્લોર પર કોઈ સક્રિય વાહન નથી.'}</span>
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        displayVehicles.forEach(car => {
+          const sIdx = getStageIndex(car);
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50 dark:hover:bg-surface-700/30 transition";
+
+          // Vehicle Identification Badge
+          const idBadge = car.isNewCar 
+            ? `<div>
+                 <span class="inline-flex items-center gap-1 font-mono font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/15 border border-purple-200 dark:border-purple-500/30 px-2 py-0.5 rounded text-[11px]">
+                   <i data-lucide="sparkles" class="w-3 h-3 text-purple-500 dark:text-purple-400"></i> ${car.tempId}
+                 </span>
+                 <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-mono">Chassis: •••${car.chassisLast6 || '000000'}</div>
+               </div>`
+            : `<div>
+                 <span class="font-mono font-bold text-amber-700 dark:text-amber-400 tracking-wider text-xs">${car.regNo}</span>
+                 ${car.chassisLast6 ? `<div class="text-[10px] text-slate-400 font-mono mt-0.5">Chassis: •••${car.chassisLast6}</div>` : ''}
+               </div>`;
+
+          // Flaws display
+          const flawsBadge = car.flaws && car.flaws.length > 0
+            ? `<span class="text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 px-2 py-0.5 rounded text-[10px] font-semibold">${car.flaws.length} Flaws Logged</span>`
+            : `<span class="text-emerald-700 dark:text-emerald-400 text-[10px] font-semibold">Clean Body</span>`;
+
+          // Stage or Delivered Badge
+          const stageDisplay = car.isDelivered
+            ? `<div>
+                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                   <i data-lucide="check-check" class="w-3 h-3"></i> Delivered & Closed
+                 </span>
+                 <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">${car.invoiceNo || 'INV-SETTLED'}</div>
+               </div>`
+            : `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium border ${car.stageBadge}">
+                 ${car.stage}
+               </span>`;
+
+          // Price display
+          const priceDisplay = car.isDelivered
+            ? `<div class="text-slate-900 dark:text-slate-100 font-bold font-mono">₹${Number(car.billingDetails?.grandTotal || car.amountTotal).toLocaleString('en-IN')}</div>
+               <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-semibold flex items-center justify-end gap-1">
+                 <i data-lucide="check" class="w-3 h-3"></i> Paid (${car.billingDetails?.paymentMode?.split('/')[0] || 'UPI'})
+               </div>`
+            : `<div class="text-slate-900 dark:text-slate-100 font-bold font-mono">₹${Number(car.amountTotal).toLocaleString('en-IN')}</div>
+               <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-medium">Adv: ₹${Number(car.amountAdvance).toLocaleString('en-IN')}</div>`;
+
+          // Action buttons
+          let actionButtons = '';
+          if (car.isDelivered) {
+            actionButtons = `
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="printInvoiceGatePass('${car.id}')" class="px-2 py-1 bg-slate-100 dark:bg-surface-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600/50 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition cursor-pointer" title="Print Invoice / Gate Pass">
+                  <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-500 dark:text-blue-400"></i>
+                  <span>Print</span>
+                </button>
+                <button onclick="sendQuickWhatsAppBill('${car.id}')" class="px-2 py-1 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition cursor-pointer" title="Send WhatsApp Bill">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            `;
+          } else if (sIdx === 3) {
+            actionButtons = `
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="openCheckoutModal('${car.id}')" class="px-2.5 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-[11px] inline-flex items-center gap-1 shadow-md shadow-emerald-500/20 transition cursor-pointer" title="Checkout & Invoicing">
+                  <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+                  <span>Checkout</span>
+                </button>
+                <button onclick="openInspectionModal('${car.id}')" class="p-1 bg-slate-100 dark:bg-surface-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] inline-flex items-center transition cursor-pointer" title="View Details">
+                  <i data-lucide="scan" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            `;
+          } else {
+            actionButtons = `
+              <button onclick="openInspectionModal('${car.id}')" class="px-2.5 py-1 bg-slate-100 dark:bg-surface-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600/50 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition cursor-pointer" title="View Inspection & Details">
+                <i data-lucide="scan" class="w-3.5 h-3.5 text-amber-500"></i>
+                <span>Details</span>
+              </button>
+            `;
+          }
+
+          tr.innerHTML = `
+            <td class="py-3.5 pr-3">${idBadge}</td>
+            <td class="py-3.5 pr-3">
+              <div class="font-semibold text-slate-900 dark:text-slate-100">${car.model}</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400">${car.customerName} • <span class="text-slate-700 dark:text-slate-300 font-medium">${car.category}</span></div>
+            </td>
+            <td class="py-3.5 pr-3 font-medium text-slate-800 dark:text-slate-200">${car.service}</td>
+            <td class="py-3.5 pr-3">${flawsBadge}</td>
+            <td class="py-3.5 pr-3">${stageDisplay}</td>
+            <td class="py-3.5 text-right font-medium">${priceDisplay}</td>
+            <td class="py-3.5 text-center">${actionButtons}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Update Top KPI Cards
+      document.getElementById('statRevenue').textContent = `₹${totalRev.toLocaleString('en-IN')}`;
+      document.getElementById('statAdvance').textContent = `₹${totalCollected.toLocaleString('en-IN')}`;
+      document.getElementById('statInShop').textContent = inShopCount;
+      document.getElementById('statCompleted').textContent = completedCount;
+      document.getElementById('statPendingDueText').textContent = `બાકી રકમ: ₹${pendingDue.toLocaleString('en-IN')}`;
+
+      // Update Stage Progress Bar & Cards
+      updateStageProgressBar(activeVehicles, stageCounts);
+
+      // Update Nav Badge
+      const navBadge = document.getElementById('navKanbanCount');
+      if (navBadge) navBadge.textContent = inShopCount;
+
+      lucide.createIcons();
+    }
+
+    // Helper: Update Dashboard Floor Stage Progress Bar & Breakdown
+    function updateStageProgressBar(activeVehicles, stageCounts) {
+      const total = activeVehicles.length || 1;
+      const p1 = Math.round((stageCounts[0] / total) * 100);
+      const p2 = Math.round((stageCounts[1] / total) * 100);
+      const p3 = Math.round((stageCounts[2] / total) * 100);
+      const p4 = Math.round((stageCounts[3] / total) * 100);
+
+      const bar = document.getElementById('stageProgressBar');
+      if (activeVehicles.length === 0) {
+        bar.innerHTML = `<div class="w-full bg-slate-200 dark:bg-slate-700/40 h-full rounded-full"></div>`;
+      } else {
+        bar.innerHTML = `
+          <div style="width: ${p1}%" class="bg-blue-500 h-full transition-all duration-300" title="વોશિંગ: ${stageCounts[0]}"></div>
+          <div style="width: ${p2}%" class="bg-amber-500 h-full transition-all duration-300" title="પેઇન્ટ કરેક્શન: ${stageCounts[1]}"></div>
+          <div style="width: ${p3}%" class="bg-purple-500 h-full transition-all duration-300" title="સિરામિક / PPF: ${stageCounts[2]}"></div>
+          <div style="width: ${p4}%" class="bg-emerald-500 h-full transition-all duration-300" title="ફાઇનલ QC: ${stageCounts[3]}"></div>
+        `;
+      }
+
+      const statCards = document.getElementById('stageStatCards');
+      statCards.innerHTML = STAGES.map((st, idx) => `
+        <div onclick="switchTab('kanban')" class="bg-slate-50 dark:bg-surface-900/70 border border-slate-200 dark:border-slate-700/60 p-3 rounded-xl hover:border-slate-400 dark:hover:border-slate-500 transition cursor-pointer group shadow-xs">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition truncate">${st.subtitle}</span>
+            <span class="w-2 h-2 rounded-full ${st.dotColor}"></span>
+          </div>
+          <div class="flex items-baseline justify-between">
+            <span class="text-xl font-black text-slate-900 dark:text-white font-mono">${stageCounts[idx]}</span>
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">${activeVehicles.length > 0 ? Math.round((stageCounts[idx]/activeVehicles.length)*100) : 0}%</span>
+          </div>
+          <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">${st.title}</div>
+        </div>
+      `).join('');
+    }
+
+    // ==================== 5. LIVE WORKSHOP KANBAN BOARD LOGIC ====================
+    let draggedVehicleId = null;
+
+    function handleDragStart(e, id) {
+      draggedVehicleId = id;
+      e.dataTransfer.setData('text/plain', id);
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const col = e.currentTarget;
+      if (!col.classList.contains('ring-2')) {
+        col.classList.add('ring-2', 'ring-amber-500/60', 'bg-amber-50/50', 'dark:bg-surface-800/80');
+      }
+    }
+
+    function handleDragLeave(e) {
+      const col = e.currentTarget;
+      col.classList.remove('ring-2', 'ring-amber-500/60', 'bg-amber-50/50', 'dark:bg-surface-800/80');
+    }
+
+    function handleDrop(e, targetStageIndex) {
+      e.preventDefault();
+      const col = e.currentTarget;
+      col.classList.remove('ring-2', 'ring-amber-500/60', 'bg-amber-50/50', 'dark:bg-surface-800/80');
+      
+      const vehicleId = draggedVehicleId || e.dataTransfer.getData('text/plain');
+      if (!vehicleId) return;
+
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car || car.isDelivered) return;
+
+      if (targetStageIndex < 0 || targetStageIndex >= STAGES.length) return;
+
+      car.stageIndex = targetStageIndex;
+      car.stage = STAGES[targetStageIndex].title;
+      car.stageBadge = STAGES[targetStageIndex].badge;
+
+      localStorage.setItem('apex_vehicles', JSON.stringify(vehicles));
+      renderAll();
+
+      if (currentDetailsVehicleId === vehicleId) {
+        openInspectionModal(vehicleId);
+      }
+    }
+
+    // Move Stage sequentially (+1 for Next, -1 for Move Back)
+    function moveVehicleStage(vehicleId, direction) {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car || car.isDelivered) return;
+
+      const currentIdx = getStageIndex(car);
+      const nextIdx = currentIdx + direction;
+      if (nextIdx < 0 || nextIdx >= STAGES.length) return;
+
+      car.stageIndex = nextIdx;
+      car.stage = STAGES[nextIdx].title;
+      car.stageBadge = STAGES[nextIdx].badge;
+
+      localStorage.setItem('apex_vehicles', JSON.stringify(vehicles));
+      renderAll();
+
+      const modal = document.getElementById('detailsModal');
+      if (!modal.classList.contains('hidden') && currentDetailsVehicleId === vehicleId) {
+        openInspectionModal(vehicleId);
+      }
+    }
+
+    // Render Full Kanban Board (Only Active In-Shop Cars)
+    function renderKanban() {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const search = (document.getElementById('kanbanSearchInput')?.value || '').toLowerCase().trim();
+
+      // Active, non-delivered vehicles only on floor
+      const activeVehicles = vehicles.filter(car => !car.isDelivered);
+
+      // Filter vehicles if search is provided
+      const filteredVehicles = activeVehicles.filter(car => {
+        if (!search) return true;
+        const model = (car.model || '').toLowerCase();
+        const cust = (car.customerName || '').toLowerCase();
+        const reg = (car.regNo || '').toLowerCase();
+        const temp = (car.tempId || '').toLowerCase();
+        const chassis = (car.chassisLast6 || '').toLowerCase();
+        const service = (car.service || '').toLowerCase();
+        return model.includes(search) || cust.includes(search) || reg.includes(search) || temp.includes(search) || chassis.includes(search) || service.includes(search);
+      });
+
+      const container = document.getElementById('kanbanColumnsContainer');
+      if (!container) return;
+
+      container.innerHTML = STAGES.map((stage, sIdx) => {
+        const stageCars = filteredVehicles.filter(car => getStageIndex(car) === sIdx);
+
+        const cardsHtml = stageCars.length > 0
+          ? stageCars.map(car => renderKanbanCard(car, sIdx)).join('')
+          : `
+            <div class="h-44 border-2 border-dashed border-slate-300 dark:border-slate-700/60 rounded-xl flex flex-col items-center justify-center text-center p-4 text-slate-400 dark:text-slate-500">
+              <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-surface-800 flex items-center justify-center text-slate-500 dark:text-slate-600 mb-2">
+                <i data-lucide="inbox" class="w-4 h-4"></i>
+              </div>
+              <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">હાલ કોઈ કાર નથી</span>
+              <span class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">આ સ્ટેજ ખાલી છે</span>
+            </div>
+          `;
+
+        return `
+          <div class="bg-slate-200/60 dark:bg-surface-900/50 rounded-2xl border border-slate-300/80 dark:border-slate-800/90 flex flex-col min-h-[580px] transition-all"
+               id="kanbanCol-${sIdx}" 
+               ondragover="handleDragOver(event)" 
+               ondragleave="handleDragLeave(event)" 
+               ondrop="handleDrop(event, ${sIdx})">
+            
+            <!-- Column Header -->
+            <div class="p-3.5 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-surface-800/70 rounded-t-2xl border-t-4 ${stage.headerColor} shadow-xs">
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full ${stage.dotColor}"></span>
+                  <h3 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm tracking-tight">${stage.title}</h3>
+                </div>
+                <span class="text-[11px] font-bold font-mono px-2 py-0.5 rounded-full ${stage.badge}">
+                  ${stageCars.length}
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium pl-4.5">${stage.subtitle}</p>
+            </div>
+
+            <!-- Cards List Area -->
+            <div class="p-3 space-y-3 flex-1 flex flex-col overflow-y-auto">
+              ${cardsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // Render Single Vehicle Card for Kanban
+    function renderKanbanCard(car, sIdx) {
+      const cleanPhone = (car.customerPhone || '').replace(/\D/g, '');
+      const waMsg = encodeURIComponent(`Apex Auto Studio: નમસ્તે ${car.customerName}, આપની ${car.model} હાલ "${car.stage}" સ્ટેજ પર છે.`);
+
+      const idBadge = car.isNewCar ? `
+        <div>
+          <span class="inline-flex items-center gap-1 font-mono font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/15 border border-purple-200 dark:border-purple-500/30 px-2 py-0.5 rounded-md text-[11px] shadow-xs">
+            <i data-lucide="sparkles" class="w-3 h-3 text-purple-500 dark:text-purple-400"></i> ${car.tempId}
+          </span>
+          <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
+            Chassis: <span class="text-purple-700 dark:text-purple-300/90 font-bold">•${car.chassisLast6 || '000000'}</span>
+          </div>
+        </div>
+      ` : `
+        <div>
+          <span class="inline-flex items-center gap-1 font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/30 px-2.5 py-1 rounded-md text-xs tracking-wider shadow-xs">
+            <i data-lucide="car" class="w-3.5 h-3.5 text-amber-500"></i> ${car.regNo}
+          </span>
+          ${car.chassisLast6 ? `<div class="text-[10px] text-slate-400 font-mono mt-0.5">Chassis: •••${car.chassisLast6}</div>` : ''}
+        </div>
+      `;
+
+      const flawsBadge = car.flaws && car.flaws.length > 0 ? `
+        <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 px-2 py-0.5 rounded-full">
+          <i data-lucide="alert-triangle" class="w-2.5 h-2.5"></i> ${car.flaws.length} Flaws Logged
+        </span>
+      ` : `
+        <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-2 py-0.5 rounded-full">
+          <i data-lucide="shield-check" class="w-2.5 h-2.5"></i> Clean Body
+        </span>
+      `;
+
+      // Back Button (disabled on Stage 1)
+      const moveBackBtn = sIdx > 0 ? `
+        <button onclick="moveVehicleStage('${car.id}', -1)" title="Send back for rework" class="py-1.5 px-2 bg-slate-100 dark:bg-surface-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg text-[11px] font-medium flex items-center justify-center gap-1 border border-slate-300 dark:border-slate-600/60 transition cursor-pointer">
+          <i data-lucide="arrow-left" class="w-3 h-3"></i>
+          <span class="hidden sm:inline">Back</span>
+        </button>
+      ` : `
+        <button disabled class="py-1.5 px-2 bg-slate-100 dark:bg-surface-900/60 text-slate-400 dark:text-slate-600 rounded-lg text-[11px] font-medium flex items-center justify-center border border-slate-200 dark:border-slate-800 cursor-not-allowed">
+          <i data-lucide="arrow-left" class="w-3 h-3"></i>
+        </button>
+      `;
+
+      // Next Button or Prominent Checkout Button for Stage 4
+      const moveNextBtn = sIdx < 3 ? `
+        <button onclick="moveVehicleStage('${car.id}', 1)" class="flex-1 py-1.5 px-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-[11px] flex items-center justify-center gap-1 shadow-md shadow-amber-500/20 transition cursor-pointer">
+          <span>Move Next</span>
+          <i data-lucide="arrow-right" class="w-3 h-3"></i>
+        </button>
+      ` : `
+        <button onclick="openCheckoutModal('${car.id}')" class="flex-1 py-1.5 px-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold rounded-lg text-[11px] flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20 transition cursor-pointer">
+          <span>Generate Bill / Checkout</span>
+          <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+        </button>
+      `;
+
+      return `
+        <div class="bg-white dark:bg-surface-800/90 hover:bg-slate-50 dark:hover:bg-surface-800 border ${sIdx === 3 ? 'border-emerald-500/40' : 'border-slate-200 dark:border-slate-700/80'} hover:border-slate-300 dark:hover:border-slate-600 rounded-2xl p-3.5 shadow-sm dark:shadow-lg transition-all duration-150 flex flex-col justify-between group cursor-grab active:cursor-grabbing"
+             draggable="true" 
+             ondragstart="handleDragStart(event, '${car.id}')">
+          
+          <!-- Card Header -->
+          <div class="flex items-start justify-between gap-2 mb-2">
+            ${idBadge}
+            <span class="text-[10px] font-mono text-slate-500 bg-slate-100 dark:bg-surface-900 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 font-semibold">${car.id}</span>
+          </div>
+
+          <!-- Vehicle Model & Category -->
+          <div class="mb-2">
+            <h4 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm tracking-tight leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">${car.model}</h4>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5">
+              <span class="text-slate-700 dark:text-slate-300 font-medium">${car.category}</span>
+              <span class="text-slate-400 dark:text-slate-600">•</span>
+              <span class="text-amber-700 dark:text-amber-400 font-mono font-semibold">₹${Number(car.amountTotal).toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+
+          <!-- Customer & WhatsApp -->
+          <div class="bg-slate-50 dark:bg-surface-900/60 rounded-xl p-2 border border-slate-200 dark:border-slate-700/50 mb-2 space-y-1">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-slate-800 dark:text-slate-200 font-medium truncate flex items-center gap-1.5">
+                <i data-lucide="user" class="w-3 h-3 text-slate-400 shrink-0"></i>
+                <span class="truncate">${car.customerName}</span>
+              </span>
+            </div>
+            <div class="flex items-center justify-between pt-1 border-t border-slate-200 dark:border-slate-800/80">
+              <span class="text-[10px] text-slate-500 dark:text-slate-400">WhatsApp:</span>
+              <a href="https://wa.me/91${cleanPhone}?text=${waMsg}" 
+                 target="_blank" 
+                 title="Send WhatsApp update"
+                 class="inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded transition">
+                <i data-lucide="message-circle" class="w-2.5 h-2.5"></i>
+                <span>${car.customerPhone || 'Connect'}</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Service Tag -->
+          <div class="mb-2">
+            <div class="inline-flex items-center gap-1 text-[10px] text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-surface-700/60 border border-slate-200 dark:border-slate-600/50 px-2 py-0.5 rounded-lg w-full">
+              <i data-lucide="wrench" class="w-2.5 h-2.5 text-amber-500 dark:text-amber-400 shrink-0"></i>
+              <span class="truncate font-medium">${car.service}</span>
+            </div>
+          </div>
+
+          <!-- Flaws & View Details Link -->
+          <div class="flex items-center justify-between gap-1 mb-3 pt-0.5">
+            ${flawsBadge}
+            <button onclick="openInspectionModal('${car.id}')" 
+                    class="text-[10px] text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-1 transition cursor-pointer font-medium hover:underline">
+              <i data-lucide="scan" class="w-3 h-3"></i>
+              <span>View Inspection</span>
+            </button>
+          </div>
+
+          <!-- Action Controls (Move Back / Next / Checkout) -->
+          <div class="flex items-center gap-1.5 pt-2 border-t border-slate-200 dark:border-slate-700/60">
+            ${moveBackBtn}
+            ${moveNextBtn}
+          </div>
+
+        </div>
+      `;
+    }
+
+    // Helper: Master render for all components
+    function renderAll() {
+      const raw = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const vehicles = migrateVehicleData(raw);
+
+      renderDashboard();
+      renderKanban();
+    }
+
+    // ==================== 6. INSPECTION & DETAILS MODAL LOGIC ====================
+    let currentDetailsVehicleId = null;
+
+    function openInspectionModal(vehicleId) {
+      currentDetailsVehicleId = vehicleId;
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      const currentIdx = getStageIndex(car);
+      const currentStage = STAGES[currentIdx];
+
+      // Modal Title
+      document.getElementById('detailModalTitle').innerHTML = `
+        <span>${car.model}</span>
+        <span class="text-xs font-mono px-2 py-0.5 rounded ${car.isNewCar ? 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30' : 'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30'}">
+          ${car.isNewCar ? car.tempId : car.regNo}
+        </span>
+      `;
+      document.getElementById('detailModalSubtitle').textContent = `Job ID: ${car.id} • ${car.category}`;
+
+      const cleanPhone = (car.customerPhone || '').replace(/\D/g, '');
+      const waMsg = encodeURIComponent(`Apex Auto Studio: નમસ્તે ${car.customerName}, આપની કાર (${car.model}) હાલ "${currentStage.title}" સ્ટેજ પર સફળતાપૂર્વક આગળ વધી રહી છે.`);
+
+      const content = document.getElementById('detailModalContent');
+      content.innerHTML = `
+        <!-- Top Highlights Banner -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 dark:bg-surface-900/90 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/60">
+          <div>
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 block uppercase tracking-wider font-semibold">ગ્રાહક (Customer)</span>
+            <div class="font-bold text-slate-900 dark:text-slate-100 text-sm mt-0.5">${car.customerName}</div>
+            <a href="https://wa.me/91${cleanPhone}?text=${waMsg}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-mono mt-1 font-semibold">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> ${car.customerPhone || 'N/A'}
+            </a>
+          </div>
+
+          <div>
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 block uppercase tracking-wider font-semibold">પસંદ કરેલ સર્વિસ</span>
+            <div class="font-semibold text-amber-600 dark:text-amber-400 text-xs mt-0.5">${car.service}</div>
+            <div class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">${car.category}</div>
+          </div>
+
+          <div>
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 block uppercase tracking-wider font-semibold">પેમેન્ટ વિગત</span>
+            <div class="font-mono font-bold text-slate-900 dark:text-white text-sm mt-0.5">₹${Number(car.amountTotal).toLocaleString('en-IN')}</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-0.5">
+              <span class="text-emerald-600 dark:text-emerald-400 font-medium">એડવાન્સ: ₹${Number(car.amountAdvance).toLocaleString('en-IN')}</span>
+              <span>•</span>
+              <span class="text-rose-500 font-medium">બાકી: ₹${(Number(car.amountTotal) - Number(car.amountAdvance)).toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        </div>
+
+        ${car.isNewCar ? `
+          <div class="bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-500/30 rounded-xl p-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-purple-500 dark:text-purple-400"></i>
+              <div>
+                <span class="text-xs font-bold text-purple-800 dark:text-purple-300">શોરૂમ નવી અનરજિસ્ટર્ડ કાર (Showroom Delivery)</span>
+                <div class="text-[11px] text-slate-600 dark:text-slate-400">ચેસિસ લાસ્ટ ૬ ડિજિટ: <span class="font-mono font-bold text-purple-900 dark:text-purple-200">${car.chassisLast6 || 'N/A'}</span></div>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded font-bold">${car.tempId}</span>
+          </div>
+        ` : ''}
+
+        <!-- 4-Stage Stepper -->
+        <div class="bg-slate-50 dark:bg-surface-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">વર્કશોપ સ્ટેજ પ્રોગ્રેસ (Live Workflow)</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium border ${currentStage.badge}">
+              ${currentStage.title}
+            </span>
+          </div>
+          <div class="grid grid-cols-4 gap-2 pt-2">
+            ${STAGES.map((s, idx) => {
+              const isPassed = idx < currentIdx;
+              const isCurrent = idx === currentIdx;
+              return `
+                <div class="flex flex-col items-center text-center p-2 rounded-lg border transition ${
+                  isCurrent ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 dark:text-amber-300 font-bold' :
+                  isPassed ? 'bg-white dark:bg-surface-800 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 font-medium' :
+                  'bg-white/60 dark:bg-surface-800/40 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500'
+                }">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 ${
+                    isCurrent ? 'bg-amber-500 text-slate-950 font-black' :
+                    isPassed ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' :
+                    'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
+                  }">
+                    ${isPassed ? '✓' : idx + 1}
+                  </div>
+                  <span class="text-[10px] font-semibold leading-tight line-clamp-1">${s.subtitle}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Digital Visual Inspection Log (Scratches/Dents) -->
+        <div class="bg-slate-50 dark:bg-surface-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="scan" class="w-4 h-4 text-amber-500"></i>
+              <span class="text-xs font-bold text-slate-900 dark:text-white">ડિજિટલ પ્રી-ઇન્સ્પેક્શન રિપોર્ટ (Pre-Inspection Damage Log)</span>
+            </div>
+            ${car.flaws && car.flaws.length > 0 ? `
+              <span class="text-[10px] bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20 px-2 py-0.5 rounded-full font-bold">
+                ${car.flaws.length} નોંધાયેલ ખામીઓ
+              </span>
+            ` : `
+              <span class="text-[10px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">
+                100% Clean Body
+              </span>
+            `}
+          </div>
+
+          ${car.flaws && car.flaws.length > 0 ? `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              ${car.flaws.map(flaw => {
+                const parts = flaw.split(':');
+                const zone = parts[0] || 'Zone';
+                const issue = parts[1] || flaw;
+                return `
+                  <div class="p-2.5 rounded-lg bg-white dark:bg-surface-800 border border-rose-200 dark:border-rose-500/30 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+                      <div>
+                        <span class="font-semibold text-slate-800 dark:text-slate-200 block text-[11px]">${zone}</span>
+                        <span class="text-rose-600 dark:text-rose-400 text-[10px] font-medium">${issue}</span>
+                      </div>
+                    </div>
+                    <span class="text-[9px] bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-mono px-1.5 py-0.5 rounded">Pre-existing</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          ` : `
+            <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-200 dark:border-emerald-500/20 flex items-center gap-3 text-emerald-700 dark:text-emerald-400">
+              <i data-lucide="shield-check" class="w-6 h-6 shrink-0 text-emerald-600 dark:text-emerald-400"></i>
+              <div>
+                <div class="font-bold text-xs text-emerald-800 dark:text-emerald-300">Clean Body — કોઈ સ્ક્રેચ કે ડેન્ટ નથી</div>
+                <div class="text-[11px] text-emerald-700/90 dark:text-emerald-400/80">આ વાહનની બોડી પર ઇનટેક વખતે કોઈ પૂર્વ-હયાત સ્ક્રેચ, ડેન્ટ કે ક્રેક નોંધાયેલ નથી.</div>
+              </div>
+            </div>
+          `}
+        </div>
+      `;
+
+      // Footer Actions (Quick move from modal & checkout trigger)
+      const footer = document.getElementById('detailModalFooter');
+      footer.innerHTML = `
+        <button onclick="closeDetailsModal()" class="px-4 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl text-xs transition cursor-pointer">
+          બંધ કરો (Close)
+        </button>
+        <div class="flex items-center gap-2">
+          ${currentIdx > 0 && !car.isDelivered ? `
+            <button onclick="moveVehicleStage('${car.id}', -1)" class="px-3 py-2 bg-slate-100 dark:bg-surface-800 hover:bg-slate-200 dark:hover:bg-surface-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              <span>Move Back</span>
+            </button>
+          ` : ''}
+
+          ${currentIdx < 3 && !car.isDelivered ? `
+            <button onclick="moveVehicleStage('${car.id}', 1)" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition cursor-pointer">
+              <span>Move to Next Stage</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          ` : ''}
+
+          ${currentIdx === 3 && !car.isDelivered ? `
+            <button onclick="closeDetailsModal(); openCheckoutModal('${car.id}');" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-emerald-500/20 transition cursor-pointer">
+              <i data-lucide="receipt" class="w-4 h-4"></i>
+              <span>Generate Bill & Checkout ➔</span>
+            </button>
+          ` : ''}
+
+          ${car.isDelivered ? `
+            <button onclick="closeDetailsModal(); printInvoiceGatePass('${car.id}');" class="px-3.5 py-2 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer">
+              <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+              <span>Print Gate Pass</span>
+            </button>
+          ` : ''}
+        </div>
+      `;
+
+      document.getElementById('detailsModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').classList.add('hidden');
+      currentDetailsVehicleId = null;
+    }
+
+    // ==================== 7. CHECKOUT, GST INVOICING & GATE PASS ENGINE ====================
+    let activeCheckoutVehicleId = null;
+
+    function openCheckoutModal(vehicleId) {
+      activeCheckoutVehicleId = vehicleId;
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      const baseAmount = Number(car.billingDetails?.baseAmount || car.amountTotal || 0);
+      const advanceAmount = Number(car.billingDetails?.advancePaid || car.amountAdvance || 0);
+      const addonAmount = Number(car.billingDetails?.addonAmount || 0);
+      const addonDesc = car.billingDetails?.addonDesc || '';
+      const discount = Number(car.billingDetails?.discount || 0);
+      const isGst = car.billingDetails ? car.billingDetails.isGst : true;
+      const paymentMode = car.billingDetails?.paymentMode || 'UPI / Google Pay';
+
+      const body = document.getElementById('checkoutModalBody');
+      body.innerHTML = `
+        <!-- Vehicle & Job Summary Header -->
+        <div class="bg-slate-50 dark:bg-surface-900/90 border border-slate-200 dark:border-slate-700/70 rounded-2xl p-4 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                <i data-lucide="car" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-slate-900 dark:text-white text-base leading-tight">${car.model}</h4>
+                <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
+                  <span class="text-slate-700 dark:text-slate-300 font-medium">${car.category}</span>
+                  <span>•</span>
+                  <span class="text-amber-600 dark:text-amber-400 font-medium">${car.service}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-right flex sm:flex-col items-center sm:items-end justify-between gap-1" id="checkoutBadgeContainer">
+              ${car.isNewCar ? `
+                <span class="font-mono font-bold text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/20 border border-purple-200 dark:border-purple-500/40 px-2.5 py-1 rounded-lg">
+                  ${car.tempId}
+                </span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Chassis: •••${car.chassisLast6 || '000000'}</span>
+              ` : `
+                <span class="font-mono font-extrabold text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/30 px-2.5 py-1 rounded-lg tracking-wider">
+                  ${car.regNo}
+                </span>
+                ${car.chassisLast6 ? `<span class="text-[10px] text-slate-400 font-mono">Chassis: •••${car.chassisLast6}</span>` : ''}
+              `}
+            </div>
+          </div>
+
+          <!-- Customer & Contact bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
+            <div>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">કસ્ટમરનું નામ</span>
+              <span class="font-bold text-slate-900 dark:text-slate-200">${car.customerName}</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">મોબાઈલ નંબર</span>
+              <span class="font-mono text-emerald-600 dark:text-emerald-400 font-bold">${car.customerPhone}</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold block">પ્રી-ઇન્સ્પેક્શન સ્ટેટસ</span>
+              ${car.flaws && car.flaws.length > 0 ? `
+                <span class="text-rose-600 dark:text-rose-400 font-semibold">${car.flaws.length} Flaws Logged at Intake</span>
+              ` : `
+                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">100% Clean Body Handover</span>
+              `}
+            </div>
+          </div>
+        </div>
+
+        <!-- Inline Tool: Permanent RTO Plate Update (for Showroom / Temp ID Cars) -->
+        ${car.isNewCar || car.tempId ? `
+          <div class="bg-purple-50 dark:bg-purple-950/25 border border-purple-200 dark:border-purple-500/40 rounded-2xl p-4 space-y-2.5" id="boxRtoUpdateBanner">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+                <span class="text-xs font-bold text-purple-800 dark:text-purple-200">RTO Number Received? Update now</span>
+              </div>
+              <span class="text-[10px] font-mono bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded font-bold">Auto-Convert Record</span>
+            </div>
+            <p class="text-[11px] text-slate-600 dark:text-slate-300">
+              આ ગાડી શોરૂમ ડિલિવરી વખતે Temp ID (<span class="font-mono text-purple-700 dark:text-purple-300 font-bold">${car.tempId}</span>) સાથે આવી હતી. જો ગ્રાહકને કાયમી RTO નંબર મળી ગયો હોય તો અહીં દાખલ કરો:
+            </p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <input type="text" id="checkoutNewPlate" placeholder="GJ-03-XX-0000" 
+                class="flex-1 bg-white dark:bg-surface-900 border border-purple-300 dark:border-purple-500/50 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white font-mono uppercase focus:border-purple-500 outline-none">
+              <button type="button" onclick="applyRtoUpdate('${car.id}')" 
+                class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-purple-600/20">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>કાયમી નંબર સેવ કરો</span>
+              </button>
+            </div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+              નોંધ: ચેસિસ નંબરના છેલ્લા ૬ ડિજિટ (•••${car.chassisLast6 || '000000'}) સિસ્ટમમાં કાયમી સચવાઈ રહેશે.
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Dynamic Bill Calculation Box -->
+        <div class="bg-slate-50 dark:bg-surface-900/60 border border-slate-200 dark:border-slate-700/70 rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+              <i data-lucide="calculator" class="w-4 h-4 text-amber-500"></i>
+              ડાયનેમિક સર્વિસ બિલ & GST કેલ્ક્યુલેશન
+            </h4>
+            
+            <!-- GST Toggle Switch -->
+            <div class="flex items-center bg-white dark:bg-surface-800 p-1 rounded-xl border border-slate-300 dark:border-slate-700 text-xs shadow-xs">
+              <label class="px-2.5 py-1 rounded-lg cursor-pointer flex items-center gap-1.5 transition ${!isGst ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-500 dark:text-slate-400'}" id="lblGstFalse">
+                <input type="radio" name="gstChoice" value="false" ${!isGst ? 'checked' : ''} onchange="toggleGstMode(false)" class="hidden">
+                <span>Non-GST / Estimate</span>
+              </label>
+              <label class="px-2.5 py-1 rounded-lg cursor-pointer flex items-center gap-1.5 transition ${isGst ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-500 dark:text-slate-400'}" id="lblGstTrue">
+                <input type="radio" name="gstChoice" value="true" ${isGst ? 'checked' : ''} onchange="toggleGstMode(true)" class="hidden">
+                <span>GST Invoice (18%)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Billing Inputs -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1 text-[11px]">મૂળ સર્વિસ ચાર્જ (Base Amount ₹) *</label>
+              <input type="number" id="checkoutBaseAmount" value="${baseAmount}" oninput="calculateCheckoutBill()" 
+                class="w-full bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono text-xs focus:border-amber-500 outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1 text-[11px]">વધારાનું કામ (Add-on Charges ₹)</label>
+              <input type="number" id="checkoutAddonAmount" value="${addonAmount}" oninput="calculateCheckoutBill()" 
+                class="w-full bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono text-xs focus:border-amber-500 outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1 text-[11px]">એડ-ઓન વિગત (Add-on Note)</label>
+              <input type="text" id="checkoutAddonDesc" value="${addonDesc}" placeholder="દા.ત. Windshield Coat, Dent Repair" 
+                class="w-full bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white text-xs focus:border-amber-500 outline-none">
+            </div>
+
+            <div>
+              <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1 text-[11px]">ડિસ્કાઉન્ટ / છૂટ (₹)</label>
+              <input type="number" id="checkoutDiscountAmount" value="${discount}" oninput="calculateCheckoutBill()" 
+                class="w-full bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono text-xs focus:border-amber-500 outline-none">
+            </div>
+          </div>
+
+          <!-- Live Breakdown Card -->
+          <div class="bg-white dark:bg-surface-800/90 rounded-xl p-4 border border-slate-200 dark:border-slate-700 space-y-2 shadow-xs">
+            <div class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300">
+              <span>સબટોટલ (Base + Addon - Discount):</span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white" id="calcSubtotalDisplay">₹0</span>
+            </div>
+
+            <div id="boxGstBreakdown" class="${isGst ? '' : 'hidden'} space-y-1.5 border-t border-slate-200 dark:border-slate-700/60 pt-2 text-xs text-slate-500 dark:text-slate-400">
+              <div class="flex items-center justify-between">
+                <span>CGST (9%):</span>
+                <span class="font-mono text-slate-800 dark:text-slate-200" id="calcCgstDisplay">₹0</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span>SGST (9%):</span>
+                <span class="font-mono text-slate-800 dark:text-slate-200" id="calcSgstDisplay">₹0</span>
+              </div>
+              <div class="flex items-center justify-between text-amber-600 dark:text-amber-400 font-semibold">
+                <span>કુલ ટેક્સ (GST 18% Total):</span>
+                <span class="font-mono" id="calcTotalTaxDisplay">₹0</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-sm font-bold text-slate-900 dark:text-white border-t border-slate-200 dark:border-slate-700/80 pt-2">
+              <span>ગ્રાન્ડ ટોટલ (Grand Total):</span>
+              <span class="font-mono text-amber-600 dark:text-amber-400 text-base" id="calcGrandTotalDisplay">₹0</span>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-emerald-600 dark:text-emerald-400 pt-1 font-semibold">
+              <span>અગાઉ જમા લીધેલ એડવાન્સ (Advance Paid):</span>
+              <span class="font-mono font-bold" id="calcAdvanceDisplay">- ₹${advanceAmount.toLocaleString('en-IN')}</span>
+            </div>
+
+            <!-- Prominent Net Balance Box -->
+            <div class="mt-3 p-3.5 bg-gradient-to-r from-emerald-500/15 to-emerald-600/10 border border-emerald-500/40 rounded-xl flex items-center justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-wider font-extrabold text-emerald-800 dark:text-emerald-300 block">નેટ બાકી ચૂકવવાપાત્ર રકમ (Net Balance Payable)</span>
+                <span class="text-[11px] text-slate-500 dark:text-slate-400">ગ્રાહક પાસેથી ડિલિવરી વખતે લેવાની બાકી રકમ</span>
+              </div>
+              <div class="text-2xl font-black font-mono text-emerald-700 dark:text-emerald-400" id="calcNetBalanceDisplay">
+                ₹0
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Settlement & Gate Pass Clearance Section -->
+        <div class="bg-slate-50 dark:bg-surface-900/60 border border-slate-200 dark:border-slate-700/70 rounded-2xl p-4 sm:p-5 space-y-3">
+          <h4 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            પેમેન્ટ સેટલમેન્ટ & સિક્યુરિટી ગેટ પાસ ક્લિયરન્સ
+          </h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5 text-[11px]">પેમેન્ટ મોડ (Settlement Mode) *</label>
+              <select id="checkoutPaymentMode" class="w-full bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white text-xs focus:border-amber-500 outline-none">
+                <option value="UPI / Google Pay" ${paymentMode.includes('UPI') ? 'selected' : ''}>UPI / Google Pay / PhonePe</option>
+                <option value="Cash" ${paymentMode === 'Cash' ? 'selected' : ''}>Cash (રોકડ)</option>
+                <option value="Credit/Debit Card" ${paymentMode.includes('Card') ? 'selected' : ''}>Credit / Debit Card (POS Machine)</option>
+                <option value="Bank Transfer (NEFT/IMPS)" ${paymentMode.includes('Transfer') ? 'selected' : ''}>Bank Transfer (NEFT/IMPS/RTGS)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-slate-700 dark:text-slate-300 font-medium mb-1.5 text-[11px]">હાલ જમા લીધેલ રકમ (Amount Received Now ₹) *</label>
+              <input type="number" id="checkoutPaidNowAmount" class="w-full bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-emerald-700 dark:text-emerald-400 font-mono text-xs focus:border-emerald-500 outline-none font-bold">
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <label class="flex items-center gap-2.5 p-3 rounded-xl bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 cursor-pointer">
+              <input type="checkbox" id="checkoutMarkSettled" checked class="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 bg-white dark:bg-surface-900 border-slate-300 dark:border-slate-600">
+              <div>
+                <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">તમામ રકમ સંપૂર્ણ ચૂકવાઈ ગઈ છે (Mark as Fully Settled)</span>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">આ વાહનને વર્કશોપ ફ્લોર પરથી હટાવી "Delivered / Closed Archive" માં મોકલો અને ગેટ પાસ મંજૂર કરો.</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      `;
+
+      // Footer Actions
+      const footer = document.getElementById('checkoutModalFooter');
+      footer.innerHTML = `
+        <button onclick="closeCheckoutModal()" class="px-4 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl text-xs transition cursor-pointer">
+          રદ્દ કરો (Cancel)
+        </button>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- WhatsApp Bill Button -->
+          <button type="button" onclick="sendWhatsAppInvoice('${car.id}')" 
+            class="px-3.5 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <span>Send WhatsApp Bill</span>
+          </button>
+
+          <!-- Print Invoice & Gate Pass Button -->
+          <button type="button" onclick="printInvoiceGatePass('${car.id}')" 
+            class="px-3.5 py-2 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-blue-500/20 transition cursor-pointer">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Print Tax Invoice & Gate Pass</span>
+          </button>
+
+          <!-- Complete Checkout Button -->
+          <button type="button" onclick="completeCheckout('${car.id}')" 
+            class="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-extrabold rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/25 transition cursor-pointer">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            <span>Complete & Release Gate Pass ➔</span>
+          </button>
+        </div>
+      `;
+
+      document.getElementById('checkoutModal').classList.remove('hidden');
+      calculateCheckoutBill();
+      lucide.createIcons();
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkoutModal').classList.add('hidden');
+      activeCheckoutVehicleId = null;
+    }
+
+    // Toggle GST Mode in Checkout
+    function toggleGstMode(isGst) {
+      const lblFalse = document.getElementById('lblGstFalse');
+      const lblTrue = document.getElementById('lblGstTrue');
+      const box = document.getElementById('boxGstBreakdown');
+
+      if (isGst) {
+        lblTrue.className = 'px-2.5 py-1 rounded-lg cursor-pointer flex items-center gap-1.5 transition bg-emerald-500 text-slate-950 font-bold';
+        lblFalse.className = 'px-2.5 py-1 rounded-lg cursor-pointer flex items-center gap-1.5 transition text-slate-500 dark:text-slate-400';
+        box.classList.remove('hidden');
+      } else {
+        lblFalse.className = 'px-2.5 py-1 rounded-lg cursor-pointer flex items-center gap-1.5 transition bg-amber-500 text-slate-950 font-bold';
+        lblTrue.className = 'px-2.5 py-1 rounded-lg cursor-pointer flex items-center gap-1.5 transition text-slate-500 dark:text-slate-400';
+        box.classList.add('hidden');
+      }
+      calculateCheckoutBill();
+    }
+
+    // Dynamic Live Bill Calculation Function
+    function calculateCheckoutBill() {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === activeCheckoutVehicleId);
+      if (!car) return;
+
+      const base = Number(document.getElementById('checkoutBaseAmount')?.value) || 0;
+      const addon = Number(document.getElementById('checkoutAddonAmount')?.value) || 0;
+      const discount = Number(document.getElementById('checkoutDiscountAmount')?.value) || 0;
+      const isGst = document.querySelector('input[name="gstChoice"]:checked')?.value === 'true';
+      const advance = Number(car.amountAdvance || 0);
+
+      const subtotal = Math.max(0, base + addon - discount);
+      const cgst = isGst ? Math.round(subtotal * 0.09) : 0;
+      const sgst = isGst ? Math.round(subtotal * 0.09) : 0;
+      const totalTax = cgst + sgst;
+      const grandTotal = subtotal + totalTax;
+      const netBalance = Math.max(0, grandTotal - advance);
+
+      // Display calculated numbers
+      const subEl = document.getElementById('calcSubtotalDisplay');
+      if (subEl) subEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+
+      const cgstEl = document.getElementById('calcCgstDisplay');
+      if (cgstEl) cgstEl.textContent = `₹${cgst.toLocaleString('en-IN')}`;
+
+      const sgstEl = document.getElementById('calcSgstDisplay');
+      if (sgstEl) sgstEl.textContent = `₹${sgst.toLocaleString('en-IN')}`;
+
+      const totalTaxEl = document.getElementById('calcTotalTaxDisplay');
+      if (totalTaxEl) totalTaxEl.textContent = `₹${totalTax.toLocaleString('en-IN')}`;
+
+      const grandEl = document.getElementById('calcGrandTotalDisplay');
+      if (grandEl) grandEl.textContent = `₹${grandTotal.toLocaleString('en-IN')}`;
+
+      const advEl = document.getElementById('calcAdvanceDisplay');
+      if (advEl) advEl.textContent = `- ₹${advance.toLocaleString('en-IN')}`;
+
+      const netEl = document.getElementById('calcNetBalanceDisplay');
+      if (netEl) netEl.textContent = `₹${netBalance.toLocaleString('en-IN')}`;
+
+      // Update Paid Now default if not edited
+      const paidNowInput = document.getElementById('checkoutPaidNowAmount');
+      if (paidNowInput && !paidNowInput.dataset.manual) {
+        paidNowInput.value = netBalance;
+      }
+    }
+
+    // Apply Permanent RTO Plate Update
+    function applyRtoUpdate(vehicleId) {
+      const input = document.getElementById('checkoutNewPlate');
+      const newPlate = input ? input.value.trim().toUpperCase() : '';
+
+      if (!newPlate || newPlate.length < 6) {
+        alert('કૃપા કરીને માન્ય RTO રજિસ્ટ્રેશન નંબર દાખલ કરો! (દા.ત. GJ-03-AB-1234)');
+        return;
+      }
+
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      car.archivedTempId = car.tempId;
+      car.tempId = null;
+      car.regNo = newPlate;
+      car.isNewCar = false;
+
+      localStorage.setItem('apex_vehicles', JSON.stringify(vehicles));
+      alert(`વાહન નંબર સફળતાપૂર્વક અપડેટ થયો: ${newPlate} (ચેસિસ: •••${car.chassisLast6})`);
+
+      // Refresh Checkout modal view
+      openCheckoutModal(vehicleId);
+      renderAll();
+    }
+
+    // Complete Checkout & Settle Gate Pass
+    function completeCheckout(vehicleId) {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      // Check if permanent plate was filled in input without clicking update
+      const newPlateInput = document.getElementById('checkoutNewPlate');
+      if (newPlateInput && newPlateInput.value.trim().length >= 6) {
+        const newPlate = newPlateInput.value.trim().toUpperCase();
+        car.archivedTempId = car.tempId;
+        car.tempId = null;
+        car.regNo = newPlate;
+        car.isNewCar = false;
+      }
+
+      const base = Number(document.getElementById('checkoutBaseAmount')?.value) || 0;
+      const addon = Number(document.getElementById('checkoutAddonAmount')?.value) || 0;
+      const addonDesc = document.getElementById('checkoutAddonDesc')?.value.trim() || '';
+      const discount = Number(document.getElementById('checkoutDiscountAmount')?.value) || 0;
+      const isGst = document.querySelector('input[name="gstChoice"]:checked')?.value === 'true';
+      const advance = Number(car.amountAdvance || 0);
+
+      const subtotal = Math.max(0, base + addon - discount);
+      const cgst = isGst ? Math.round(subtotal * 0.09) : 0;
+      const sgst = isGst ? Math.round(subtotal * 0.09) : 0;
+      const grandTotal = subtotal + cgst + sgst;
+      const netBalance = Math.max(0, grandTotal - advance);
+
+      const paymentMode = document.getElementById('checkoutPaymentMode')?.value || 'UPI / Google Pay';
+      const paidNow = Number(document.getElementById('checkoutPaidNowAmount')?.value) || netBalance;
+      const markSettled = document.getElementById('checkoutMarkSettled')?.checked;
+
+      // Generate Invoice & Gate Pass Number
+      const invNum = `INV-2026-${Date.now().toString().slice(-4)}`;
+      const gatePassNum = `GP-2026-${Date.now().toString().slice(-4)}`;
+
+      // Save Billing Details
+      car.invoiceNo = invNum;
+      car.gatePassNo = gatePassNum;
+      car.isDelivered = markSettled;
+      car.status = markSettled ? "Delivered" : "Final QC";
+      car.deliveredAt = new Date().toISOString();
+
+      car.billingDetails = {
+        baseAmount: base,
+        addonAmount: addon,
+        addonDesc: addonDesc,
+        discount: discount,
+        isGst: isGst,
+        subtotal: subtotal,
+        cgst: cgst,
+        sgst: sgst,
+        grandTotal: grandTotal,
+        advancePaid: advance,
+        finalPaid: paidNow,
+        paymentMode: paymentMode,
+        balanceRemaining: Math.max(0, netBalance - paidNow),
+        settledAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('apex_vehicles', JSON.stringify(vehicles));
+
+      closeCheckoutModal();
+      renderAll();
+
+      alert(`✅ ચેકઆઉટ સફળ! ઇન્વોઇસ #${invNum} અને ગેટ પાસ #${gatePassNum} તૈયાર છે.`);
+    }
+
+    // Generate & Send WhatsApp Bill
+    function sendWhatsAppInvoice(vehicleId) {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      const base = Number(document.getElementById('checkoutBaseAmount')?.value || car.amountTotal || 0);
+      const addon = Number(document.getElementById('checkoutAddonAmount')?.value || car.billingDetails?.addonAmount || 0);
+      const addonDesc = document.getElementById('checkoutAddonDesc')?.value || car.billingDetails?.addonDesc || '';
+      const discount = Number(document.getElementById('checkoutDiscountAmount')?.value || car.billingDetails?.discount || 0);
+      const isGst = document.querySelector('input[name="gstChoice"]:checked')
+        ? document.querySelector('input[name="gstChoice"]:checked').value === 'true'
+        : (car.billingDetails ? car.billingDetails.isGst : true);
+      const advance = Number(car.amountAdvance || 0);
+      const subtotal = Math.max(0, base + addon - discount);
+      const cgst = isGst ? Math.round(subtotal * 0.09) : 0;
+      const sgst = isGst ? Math.round(subtotal * 0.09) : 0;
+      const grandTotal = subtotal + cgst + sgst;
+      const paymentMode = document.getElementById('checkoutPaymentMode')?.value || car.billingDetails?.paymentMode || 'UPI / Google Pay';
+      const cleanPhone = (car.customerPhone || '').replace(/\D/g, '');
+
+      const plateOrTemp = car.isNewCar ? `${car.tempId} (Chassis: •••${car.chassisLast6})` : car.regNo;
+      const invNo = car.invoiceNo || `INV-2026-${Date.now().toString().slice(-4)}`;
+
+      const msg = `✨ *APEX AUTO STUDIO - RAJKOT* ✨
+*Tax Invoice & Studio Exit Gate Pass*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 *Invoice No:* ${invNo}
+📅 *Date:* ${new Date().toLocaleDateString('en-GB')}
+
+🚗 *Vehicle Details:*
+• *Car:* ${car.model} (${car.category})
+• *Number:* ${plateOrTemp}
+• *Customer:* ${car.customerName}
+
+🛠️ *Services Rendered:*
+• ${car.service}
+${addon && addon > 0 ? `• Add-on Work: ${addonDesc || 'Special Detailing'} (₹${addon.toLocaleString('en-IN')})` : ''}
+
+💰 *Billing & Payment Summary:*
+• Base Amount: ₹${base.toLocaleString('en-IN')}
+${discount > 0 ? `• Discount: -₹${discount.toLocaleString('en-IN')}` : ''}
+• Subtotal: ₹${subtotal.toLocaleString('en-IN')}
+${isGst ? `• GST (18% - CGST 9% + SGST 9%): ₹${(cgst + sgst).toLocaleString('en-IN')}` : '• Billing Type: Estimate / Non-GST'}
+• *Grand Total:* ₹${grandTotal.toLocaleString('en-IN')}
+• Advance Paid: ₹${advance.toLocaleString('en-IN')}
+• *Settled via ${paymentMode}:* ₹${(grandTotal - advance).toLocaleString('en-IN')}
+• *Net Balance Due: ₹0 (FULLY PAID)*
+
+🛡️ *Quality & Gate Pass Clearance:*
+• Pre-inspection checks cleared. Car handed over in pristine showroom condition.
+• Security Status: *APPROVED FOR EXIT ✅*
+
+Thank you for choosing Apex Auto Studio! For care instructions & maintenance, call: +91 98240 12345.`;
+
+      const url = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    // Quick WhatsApp Bill from Archive Table
+    function sendQuickWhatsAppBill(vehicleId) {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      const cleanPhone = (car.customerPhone || '').replace(/\D/g, '');
+      const bill = car.billingDetails || {};
+      const grandTotal = bill.grandTotal || car.amountTotal || 0;
+      const invNo = car.invoiceNo || 'INV-SETTLED';
+
+      const msg = `✨ *APEX AUTO STUDIO - RAJKOT* ✨
+*Tax Invoice & Gate Pass Slip*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 *Invoice:* ${invNo}
+🚗 *Vehicle:* ${car.model} (${car.regNo || car.tempId})
+👤 *Customer:* ${car.customerName}
+🛠️ *Service:* ${car.service}
+💰 *Total Paid:* ₹${Number(grandTotal).toLocaleString('en-IN')} (${bill.paymentMode || 'UPI'})
+🛡️ *Gate Pass:* APPROVED FOR EXIT ✅
+
+Thank you for visiting Apex Auto Studio! 📞 98240 12345`;
+
+      window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // Print Tax Invoice & Gate Pass Slip
+    function printInvoiceGatePass(vehicleId) {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      const bill = car.billingDetails || {};
+      const base = bill.baseAmount || car.amountTotal || 0;
+      const addon = bill.addonAmount || 0;
+      const addonDesc = bill.addonDesc || 'Additional Touch-up Work';
+      const discount = bill.discount || 0;
+      const isGst = bill.isGst !== undefined ? bill.isGst : true;
+      const subtotal = bill.subtotal || Math.max(0, base + addon - discount);
+      const cgst = bill.cgst !== undefined ? bill.cgst : (isGst ? Math.round(subtotal * 0.09) : 0);
+      const sgst = bill.sgst !== undefined ? bill.sgst : (isGst ? Math.round(subtotal * 0.09) : 0);
+      const grandTotal = bill.grandTotal || (subtotal + cgst + sgst);
+      const advance = bill.advancePaid || car.amountAdvance || 0;
+      const finalPaid = bill.finalPaid || Math.max(0, grandTotal - advance);
+      const paymentMode = bill.paymentMode || 'UPI / Bank Transfer';
+      const invNo = car.invoiceNo || `INV-2026-${Date.now().toString().slice(-4)}`;
+      const gatePassNo = car.gatePassNo || `GP-2026-${Date.now().toString().slice(-4)}`;
+
+      const flawsList = car.flaws && car.flaws.length > 0
+        ? car.flaws.join(', ')
+        : 'કોઈ સ્ક્રેચ કે ડેન્ટ નહોતા (100% Clean Body Handover)';
+
+      const printEl = document.getElementById('printableInvoice');
+      printEl.innerHTML = `
+        <div class="border-2 border-slate-900 p-6 max-w-4xl mx-auto space-y-6">
+          
+          <!-- Studio Header -->
+          <div class="flex items-start justify-between border-b-2 border-slate-900 pb-4">
+            <div>
+              <h1 class="text-3xl font-black tracking-tight text-slate-950 uppercase">Apex Auto Studio</h1>
+              <p class="text-xs font-semibold text-slate-700 tracking-wider uppercase">Automotive Detailing & Paint Protection Specialists</p>
+              <p class="text-[11px] text-slate-600 mt-1">150 Feet Ring Road, Near Mavdi Chowk, Rajkot, Gujarat - 360004</p>
+              <p class="text-[11px] text-slate-600">Phone: +91 98240 12345 • Email: care@apexautostudio.com</p>
+            </div>
+            <div class="text-right">
+              <span class="inline-block px-3 py-1 bg-slate-900 text-white font-mono font-bold text-xs uppercase tracking-wider">
+                TAX INVOICE & GATE PASS
+              </span>
+              <div class="text-xs font-mono font-bold text-slate-800 mt-2">Invoice: ${invNo}</div>
+              <div class="text-xs font-mono text-slate-600">Gate Pass: ${gatePassNo}</div>
+              <div class="text-[11px] text-slate-600">Date: ${new Date().toLocaleDateString('en-GB')}</div>
+              <div class="text-[10px] text-slate-500 font-mono mt-1">GSTIN: 24AABCA1234F1Z8</div>
+            </div>
+          </div>
+
+          <!-- Customer & Vehicle Info Grid -->
+          <div class="grid grid-cols-2 gap-6 text-xs border-b border-slate-300 pb-4">
+            <div class="space-y-1">
+              <span class="font-bold uppercase tracking-wider text-slate-500 text-[10px] block">Customer Details</span>
+              <div class="font-bold text-sm text-slate-900">${car.customerName}</div>
+              <div class="text-slate-700">Phone: ${car.customerPhone}</div>
+              <div class="text-slate-700">Rajkot, Gujarat</div>
+            </div>
+            <div class="space-y-1 text-right">
+              <span class="font-bold uppercase tracking-wider text-slate-500 text-[10px] block">Vehicle Details</span>
+              <div class="font-mono font-extrabold text-sm text-slate-900">${car.regNo || car.tempId}</div>
+              <div class="font-semibold text-slate-800">${car.model} (${car.category})</div>
+              ${car.chassisLast6 ? `<div class="font-mono text-slate-600 text-[11px]">Chassis Last 6: •••${car.chassisLast6}</div>` : ''}
+            </div>
+          </div>
+
+          <!-- Billing Items Table -->
+          <div>
+            <table class="w-full text-left text-xs border border-slate-900">
+              <thead class="bg-slate-100 border-b border-slate-900 text-slate-900">
+                <tr>
+                  <th class="p-2.5 font-bold">#</th>
+                  <th class="p-2.5 font-bold">Service Description</th>
+                  <th class="p-2.5 font-bold">SAC / HSN</th>
+                  <th class="p-2.5 font-bold text-right">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-300">
+                <tr>
+                  <td class="p-2.5 font-mono">1</td>
+                  <td class="p-2.5 font-bold">${car.service}</td>
+                  <td class="p-2.5 font-mono text-slate-600">998714</td>
+                  <td class="p-2.5 font-mono text-right font-bold">₹${base.toLocaleString('en-IN')}</td>
+                </tr>
+                ${addon && addon > 0 ? `
+                  <tr>
+                    <td class="p-2.5 font-mono">2</td>
+                    <td class="p-2.5">${addonDesc || 'Specialized Detailing Add-on'}</td>
+                    <td class="p-2.5 font-mono text-slate-600">998714</td>
+                    <td class="p-2.5 font-mono text-right font-bold">₹${addon.toLocaleString('en-IN')}</td>
+                  </tr>
+                ` : ''}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tax & Total Calculation Summary -->
+          <div class="flex justify-end pt-1">
+            <div class="w-72 space-y-1.5 text-xs">
+              <div class="flex justify-between text-slate-700">
+                <span>Subtotal:</span>
+                <span class="font-mono font-bold">₹${subtotal.toLocaleString('en-IN')}</span>
+              </div>
+              ${discount > 0 ? `
+                <div class="flex justify-between text-slate-700">
+                  <span>Discount:</span>
+                  <span class="font-mono text-rose-700">- ₹${discount.toLocaleString('en-IN')}</span>
+                </div>
+              ` : ''}
+              ${isGst ? `
+                <div class="flex justify-between text-slate-600">
+                  <span>CGST (9%):</span>
+                  <span class="font-mono">₹${cgst.toLocaleString('en-IN')}</span>
+                </div>
+                <div class="flex justify-between text-slate-600">
+                  <span>SGST (9%):</span>
+                  <span class="font-mono">₹${sgst.toLocaleString('en-IN')}</span>
+                </div>
+              ` : `
+                <div class="text-[10px] text-slate-500 text-right italic">Non-GST / Studio Estimate Invoice</div>
+              `}
+              <div class="flex justify-between text-sm font-extrabold text-slate-950 border-t border-slate-900 pt-1">
+                <span>Grand Total:</span>
+                <span class="font-mono">₹${grandTotal.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="flex justify-between text-slate-700">
+                <span>Advance Paid:</span>
+                <span class="font-mono">- ₹${advance.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="flex justify-between font-bold text-slate-900 border-t border-slate-300 pt-1">
+                <span>Settled (${paymentMode}):</span>
+                <span class="font-mono text-emerald-800">₹${finalPaid.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="flex justify-between font-black text-slate-950 bg-slate-100 p-1.5 rounded">
+                <span>Balance Due:</span>
+                <span class="font-mono text-emerald-700">₹0.00 (PAID)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Handover & Digital Pre-Inspection Clearance Note -->
+          <div class="p-3 bg-slate-50 border border-slate-300 rounded text-xs space-y-1">
+            <span class="font-bold text-slate-900 block">Pre-Inspection Handover Clearance:</span>
+            <p class="text-[11px] text-slate-700">
+              ઇનટેક સમયે નોંધાયેલ પૂર્વ-હયાત ખામીઓ: <span class="font-semibold text-slate-900">${flawsList}</span>.
+            </p>
+            <p class="text-[10px] text-slate-500 italic">
+              ગ્રાહકે કારનું સંપૂર્ણ નિરીક્ષણ કરી ગુણવત્તા સંતોષ સાથે સ્વીકારી છે.
+            </p>
+          </div>
+
+          <!-- Studio Gate Pass Clearance Section -->
+          <div class="border-2 border-dashed border-slate-900 p-4 rounded text-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-black text-sm uppercase tracking-wider text-slate-900">STUDIO EXIT GATE PASS • સિક્યુરિટી ગેટ પાસ</span>
+              <span class="bg-slate-900 text-white font-mono text-[10px] px-2 py-0.5 rounded font-bold">PERMITTED FOR EXIT</span>
+            </div>
+            <p class="text-[11px] text-slate-700">
+              આથી પ્રમાણિત કરવામાં આવે છે કે વાહન નંબર <strong>${car.regNo || car.tempId}</strong> (${car.model}) ના તમામ સર્વિસ ચાર્જ સંપૂર્ણ ચૂકવાઈ ગયા છે. આ વાહનને સ્ટુડિયો પરિસરમાંથી બહાર લઈ જવાની મંજૂરી છે.
+            </p>
+          </div>
+
+          <!-- Signatures -->
+          <div class="grid grid-cols-2 gap-12 pt-8 text-center text-xs">
+            <div class="border-t border-slate-900 pt-1">
+              <span class="font-bold text-slate-900">Customer Signature</span>
+              <p class="text-[10px] text-slate-500">ગ્રાહકની સહી</p>
+            </div>
+            <div class="border-t border-slate-900 pt-1">
+              <span class="font-bold text-slate-900">For, Apex Auto Studio</span>
+              <p class="text-[10px] text-slate-500">Authorized Signatory / QA Head</p>
+            </div>
+          </div>
+
+        </div>
+      `;
+
+      window.print();
+    }
+
+    // ==================== 8. INTAKE & PRE-INSPECTION MODAL LOGIC ====================
+    const intakeModal = document.getElementById('intakeModal');
+    const btnIntakeTrigger = document.getElementById('btnIntakeTrigger');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const btnCancelModal = document.getElementById('btnCancelModal');
+    const btnSaveVehicle = document.getElementById('btnSaveVehicle');
+
+    const vehicleTypeRadios = document.querySelectorAll('input[name="vehicleType"]');
+    const boxRegNo = document.getElementById('boxRegNo');
+    const boxTempId = document.getElementById('boxTempId');
+    const boxChassis = document.getElementById('boxChassis');
+    const lblRegCar = document.getElementById('lblRegCar');
+    const lblNewCar = document.getElementById('lblNewCar');
+    const inputTempId = document.getElementById('inputTempId');
+
+    let recordedFlaws = [];
+
+    // Open Modal Function
+    btnIntakeTrigger.addEventListener('click', () => {
+      // Generate Next Temp ID
+      const randomNum = Math.floor(100 + Math.random() * 900);
+      inputTempId.value = `TEMP-2026-${randomNum}`;
+
+      // Reset Inputs
+      document.getElementById('inputRegNo').value = '';
+      document.getElementById('inputChassis').value = '';
+      document.getElementById('inputCarModel').value = '';
+      document.getElementById('inputCustName').value = '';
+      document.getElementById('inputCustPhone').value = '';
+      document.getElementById('inputTotalAmount').value = '15000';
+      document.getElementById('inputAdvanceAmount').value = '5000';
+
+      // Reset Flaws
+      recordedFlaws = [];
+      updateFlawSummary();
+      document.querySelectorAll('.btn-flaw').forEach(b => {
+        b.className = 'btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer';
+      });
+
+      // Reset to Registered Car View
+      document.querySelector('input[name="vehicleType"][value="registered"]').checked = true;
+      boxRegNo.classList.remove('hidden');
+      boxTempId.classList.add('hidden');
+      boxChassis.classList.add('hidden');
+      lblRegCar.className = 'flex items-center gap-3 p-3 rounded-xl border border-amber-500/50 bg-amber-500/10 cursor-pointer transition';
+      lblNewCar.className = 'flex items-center gap-3 p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-surface-800 cursor-pointer transition';
+
+      intakeModal.classList.remove('hidden');
+      lucide.createIcons();
+    });
+
+    // Close Modal Functions
+    function closeModal() {
+      intakeModal.classList.add('hidden');
+    }
+    btnCloseModal.addEventListener('click', closeModal);
+    btnCancelModal.addEventListener('click', closeModal);
+
+    // Toggle: Registered vs Brand New Showroom Car
+    vehicleTypeRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'unregistered') {
+          boxRegNo.classList.add('hidden');
+          boxTempId.classList.remove('hidden');
+          boxChassis.classList.remove('hidden');
+          lblNewCar.className = 'flex items-center gap-3 p-3 rounded-xl border border-purple-300 dark:border-purple-500/60 bg-purple-50 dark:bg-purple-500/10 cursor-pointer transition';
+          lblRegCar.className = 'flex items-center gap-3 p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-surface-800 cursor-pointer transition';
+        } else {
+          boxRegNo.classList.remove('hidden');
+          boxTempId.classList.add('hidden');
+          boxChassis.classList.add('hidden');
+          lblRegCar.className = 'flex items-center gap-3 p-3 rounded-xl border border-amber-500/50 bg-amber-500/10 cursor-pointer transition';
+          lblNewCar.className = 'flex items-center gap-3 p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-surface-800 cursor-pointer transition';
+        }
+      });
+    });
+
+    // Flaws Selection Logic
+    document.querySelectorAll('.btn-flaw').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const zone = this.closest('.zone-tags').dataset.zone;
+        const flawText = `${zone}: ${this.textContent.trim()}`;
+
+        if (this.classList.contains('bg-rose-500/20') || this.classList.contains('bg-rose-100')) {
+          this.className = 'btn-flaw px-2 py-1 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded text-[11px] cursor-pointer';
+          recordedFlaws = recordedFlaws.filter(f => f !== flawText);
+        } else {
+          this.className = 'btn-flaw px-2 py-1 bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-500/40 rounded text-[11px] font-semibold cursor-pointer';
+          recordedFlaws.push(flawText);
+        }
+        updateFlawSummary();
+      });
+    });
+
+    function updateFlawSummary() {
+      const display = document.getElementById('flawSummaryText');
+      if (recordedFlaws.length === 0) {
+        display.textContent = 'કોઈ સ્ક્રેચ/ડેન્ટ સિલેક્ટ કરેલ નથી (Clean Body)';
+        display.className = 'text-slate-500 dark:text-slate-400';
+      } else {
+        display.textContent = recordedFlaws.join(' | ');
+        display.className = 'text-rose-600 dark:text-rose-400 font-medium';
+      }
+    }
+
+    // Save New Vehicle Intake & Push to Dashboard & Kanban (Defaults to Stage 1)
+    btnSaveVehicle.addEventListener('click', () => {
+      const isNewCar = document.querySelector('input[name="vehicleType"]:checked').value === 'unregistered';
+      const regNo = document.getElementById('inputRegNo').value.trim().toUpperCase();
+      const tempId = document.getElementById('inputTempId').value;
+      const chassisLast6 = document.getElementById('inputChassis').value.trim();
+      const model = document.getElementById('inputCarModel').value.trim();
+      const category = document.getElementById('selectCategory').value;
+      const custName = document.getElementById('inputCustName').value.trim();
+      const custPhone = document.getElementById('inputCustPhone').value.trim();
+      const service = document.getElementById('selectService').value;
+      const amountTotal = Number(document.getElementById('inputTotalAmount').value) || 0;
+      const amountAdvance = Number(document.getElementById('inputAdvanceAmount').value) || 0;
+
+      // Validation
+      if (!model || !custName || !custPhone) {
+        alert('કૃપા કરીને કાર મોડેલ, કસ્ટમરનું નામ અને મોબાઈલ નંબર દાખલ કરો!');
+        return;
+      }
+      if (!isNewCar && !regNo) {
+        alert('કૃપા કરીને ગાડીનો રજિસ્ટ્રેશન નંબર દાખલ કરો!');
+        return;
+      }
+      if (isNewCar && !chassisLast6) {
+        alert('નવી ગાડી માટે ચેસિસ નંબરના છેલ્લા ૬ ડિજિટ દાખલ કરવા જરૂરી છે!');
+        return;
+      }
+
+      // Create Vehicle Object defaulting to Stage 1: Washing & Decontamination
+      const newVehicle = {
+        id: `JOB-${Date.now().toString().slice(-4)}`,
+        isNewCar: isNewCar,
+        regNo: isNewCar ? null : regNo,
+        tempId: isNewCar ? tempId : null,
+        chassisLast6: isNewCar ? chassisLast6 : null,
+        model: isNewCar ? `${model} (New)` : model,
+        category: category,
+        customerName: custName,
+        customerPhone: custPhone,
+        service: service,
+        flaws: [...recordedFlaws],
+        stageIndex: 0,
+        stage: STAGES[0].title,
+        stageBadge: STAGES[0].badge,
+        amountTotal: amountTotal,
+        amountAdvance: amountAdvance,
+        isDelivered: false,
+        createdAt: new Date().toISOString()
+      };
+
+      // Save to LocalStorage
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      vehicles.unshift(newVehicle);
+      localStorage.setItem('apex_vehicles', JSON.stringify(vehicles));
+
+      // Close Modal & Re-render All Views
+      closeModal();
+      renderAll();
+    });
+
+    // Start App with persisted theme & auth check
+    initTheme();
+    checkAuth();
+  </script>
+</body>
+</html>
