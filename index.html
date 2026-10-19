@@ -167,18 +167,29 @@
         </div>
       </div>
 
-      <!-- Center: Tab Navigation (Dashboard vs Live Workshop Kanban) -->
-      <nav class="flex items-center bg-slate-100 dark:bg-surface-900/90 p-1 rounded-xl border border-slate-200 dark:border-slate-700/80 order-3 sm:order-2 w-full sm:w-auto justify-center transition-colors">
+      <!-- Center: Tab Navigation (Dashboard, Live Workshop Kanban, Reports & CRM) -->
+      <nav class="flex items-center gap-1 bg-slate-100 dark:bg-surface-900/90 p-1 rounded-xl border border-slate-200 dark:border-slate-700/80 order-3 sm:order-2 w-full sm:w-auto justify-start sm:justify-center overflow-x-auto no-scrollbar transition-colors">
         <button id="navDashboard" onclick="switchTab('dashboard')" 
-          class="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-          <span>Dashboard Overview</span>
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 shrink-0">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+          <span>Dashboard</span>
         </button>
         <button id="navKanban" onclick="switchTab('kanban')" 
-          class="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
-          <i data-lucide="kanban" class="w-4 h-4"></i>
-          <span>Live Workshop (Kanban)</span>
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0">
+          <i data-lucide="kanban" class="w-3.5 h-3.5"></i>
+          <span>Live Workshop</span>
           <span id="navKanbanCount" class="bg-amber-500/20 text-amber-700 dark:text-amber-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold">0</span>
+        </button>
+        <button id="navReports" onclick="switchTab('reports')" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0">
+          <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
+          <span>Reports & Revenue</span>
+        </button>
+        <button id="navCrm" onclick="switchTab('crm')" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0">
+          <i data-lucide="users" class="w-3.5 h-3.5"></i>
+          <span>CRM & History</span>
+          <span id="navCrmReminderCount" class="bg-rose-500/20 text-rose-600 dark:text-rose-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold hidden">0</span>
         </button>
       </nav>
 
@@ -403,6 +414,249 @@
         <!-- 4 Kanban Stage Columns Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start" id="kanbanColumnsContainer">
           <!-- Dynamically populated with 4 stage columns -->
+        </div>
+
+      </div>
+
+      <!-- ==================== VIEW C: REPORTS & REVENUE ==================== -->
+      <div id="viewReports" class="hidden space-y-6">
+        
+        <!-- Reports Header & Quick Time Filter Bar -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              રિપોર્ટ્સ & ફાઇનાન્શિયલ એનાલિટિક્સ
+              <span class="text-xs bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-semibold">Real-time Revenue & GST</span>
+            </h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">સ્ટુડિયો આવક, GST કલેક્શન (CGST 9% + SGST 9%), કેટેગરી અનુસાર સેલ્સ અને સંપૂર્ણ ઇન્વોઇસ સ્ટેટમેન્ટ.</p>
+          </div>
+
+          <!-- Quick Filters & CSV Export CTA -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Time Filter Pills -->
+            <div class="flex items-center bg-white dark:bg-surface-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs">
+              <button id="btnFilterReport_all" onclick="setReportsDateFilter('all')" class="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition shadow-xs cursor-pointer">All Time</button>
+              <button id="btnFilterReport_month" onclick="setReportsDateFilter('month')" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer">This Month</button>
+              <button id="btnFilterReport_week" onclick="setReportsDateFilter('week')" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer">This Week</button>
+              <button id="btnFilterReport_today" onclick="setReportsDateFilter('today')" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer">Today</button>
+            </div>
+
+            <!-- Export as CSV Button -->
+            <button onclick="exportReportsCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition cursor-pointer shrink-0">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Export as CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Key Financial Summary KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: Total Revenue -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>કુલ આવક (Total Revenue)</span>
+              <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <i data-lucide="wallet" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight" id="reportTotalRevenue">₹0</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              <span>Billed Revenue</span>
+              <span id="reportActiveRevenue" class="text-amber-600 dark:text-amber-400 font-semibold">(+₹0 In-Shop)</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
+          </div>
+
+          <!-- Card 2: Total GST Collected -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>GST કલેક્શન (Total GST 18%)</span>
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <i data-lucide="receipt" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 tracking-tight" id="reportTotalGst">₹0</div>
+            <div class="flex items-center gap-1.5 text-[10px] font-mono">
+              <span class="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-semibold" id="reportCgstDisplay">CGST: ₹0</span>
+              <span class="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-semibold" id="reportSgstDisplay">SGST: ₹0</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+          </div>
+
+          <!-- Card 3: Advance Received vs Pending Market Due -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>જમા એડવાન્સ vs બાકી પેમેન્ટ</span>
+              <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                <i data-lucide="credit-card" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-blue-600 dark:text-blue-400 tracking-tight" id="reportTotalAdvance">₹0</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+              <span>Recv Collections</span>
+              <span id="reportPendingDue" class="bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold px-1.5 py-0.5 rounded border border-rose-500/20 text-[10px]">₹0 Market Due</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+          </div>
+
+          <!-- Card 4: Completed Jobs & Avg Ticket Size -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>પૂર્ણ થયેલ જોબ્સ & એવરેજ ટિકિટ</span>
+              <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                <i data-lucide="award" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-purple-600 dark:text-purple-400 tracking-tight" id="reportCompletedCount">0 Cars</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              <span class="font-semibold text-purple-700 dark:text-purple-300" id="reportAvgTicket">Avg: ₹0 / car</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
+          </div>
+        </div>
+
+        <!-- Service Category Revenue Breakdown -->
+        <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm dark:shadow-none space-y-4 transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700/80 pb-3">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-amber-500"></i>
+                સર્વિસ કેટેગરી મુજબ બિઝનેસ બ્રેકડાઉન (Service Category Revenue)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">દરેક સર્વિસ કેટેગરીમાંથી થયેલી આવક અને કુલ વોલ્યુમ</p>
+            </div>
+            <span class="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400" id="reportCategoryTotalDisplay">Total: ₹0</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="reportCategoryContainer">
+            <!-- Dynamically populated with category breakdown bars -->
+          </div>
+        </div>
+
+        <!-- Comprehensive Revenue & Invoicing Statement Table -->
+        <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm dark:shadow-none overflow-hidden transition-colors">
+          <!-- Table Controls Header -->
+          <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-surface-900/40">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                <i data-lucide="receipt-text" class="w-4 h-4 text-emerald-500"></i>
+                વિગતવાર ઇન્વોઇસ અને આવક સ્ટેટમેન્ટ (Detailed Revenue Statement)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">ઇન્વોઇસ નંબર, કસ્ટમર, વાહન, GST અને પેમેન્ટ મોડનું સંપૂર્ણ સ્ટેટમેન્ટ</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              <!-- Search Table -->
+              <div class="relative w-full sm:w-64">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="reportsSearchInput" oninput="renderReports()" placeholder="Search vehicle, customer, inv..."
+                  class="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-amber-500">
+              </div>
+
+              <!-- Payment Mode Filter -->
+              <select id="reportsFilterPayment" onchange="renderReports()" 
+                class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <option value="all">All Payment Modes</option>
+                <option value="UPI">UPI / Google Pay</option>
+                <option value="Cash">Cash (રોકડ)</option>
+                <option value="Card">Credit / Debit Card</option>
+                <option value="Bank">Bank Transfer</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Table Content -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-surface-900/90 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700/80">
+                  <th class="p-3.5 pl-5">તારીખ & ઇન્વોઇસ #</th>
+                  <th class="p-3.5">વાહન / મોડેલ</th>
+                  <th class="p-3.5">કસ્ટમર ડિટેલ્સ</th>
+                  <th class="p-3.5">સર્વિસ</th>
+                  <th class="p-3.5">પેમેન્ટ મોડ</th>
+                  <th class="p-3.5">GST સ્થિતિ</th>
+                  <th class="p-3.5 text-right">નેટ રકમ</th>
+                  <th class="p-3.5 pr-5 text-center">ક્રિયા</th>
+                </tr>
+              </thead>
+              <tbody id="reportsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/50 text-xs">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Footer Summary -->
+          <div class="p-4 bg-slate-50 dark:bg-surface-900/60 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between text-xs text-slate-600 dark:text-slate-400">
+            <span id="reportsTableCountDisplay">Showing 0 records</span>
+            <div class="flex items-center gap-4 font-mono font-bold">
+              <span>Subtotal: <span id="reportsTableSubtotalDisplay" class="text-slate-900 dark:text-white">₹0</span></span>
+              <span>Total GST: <span id="reportsTableGstDisplay" class="text-emerald-600 dark:text-emerald-400">₹0</span></span>
+              <span>Grand Total: <span id="reportsTableGrandDisplay" class="text-amber-600 dark:text-amber-400 text-sm">₹0</span></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== VIEW D: CRM & VEHICLE HISTORY ==================== -->
+      <div id="viewCrm" class="hidden space-y-6">
+        
+        <!-- CRM Header & Omnibox Search Bar -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              વાહન સર્વિસ હિસ્ટ્રી & સ્માર્ટ વોરંટી CRM
+              <span class="text-xs bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20 px-2.5 py-0.5 rounded-full font-semibold">Smart Warranty CRM</span>
+            </h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">વાહનનો સંપૂર્ણ ઇતિહાસ, જૂના જોબ્સ, પ્રી-ઇન્સ્પેક્શન સ્ક્રેચ લોગ્સ અને સિરામિક/PPF મેઈન્ટેનન્સ રીમાઇન્ડર.</p>
+          </div>
+
+          <!-- Omnibox Search Bar -->
+          <div class="relative w-full lg:w-96">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="crmSearchInput" oninput="handleCrmSearch()"
+              placeholder="Search by Plate (e.g. GJ-03), Customer, Phone, or Temp ID..."
+              class="w-full pl-10 pr-9 py-2.5 bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition shadow-sm dark:shadow-none">
+            <button id="crmClearSearchBtn" onclick="clearCrmSearch()" title="Clear Search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold p-1">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Upcoming Due Services & Warranty Top-ups Panel -->
+        <div class="bg-gradient-to-br from-amber-500/10 via-rose-500/5 to-transparent border border-amber-500/30 rounded-2xl p-5 shadow-sm dark:shadow-none space-y-4 transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-500/20 pb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <i data-lucide="bell-ring" class="w-5 h-5 animate-pulse"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                  સ્માર્ટ વોરંટી & મેઈન્ટેનન્સ રીમાઇન્ડર એન્જિન
+                  <span class="bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-2 py-0.2 rounded-full text-[10px] font-mono font-bold" id="crmRemindersBadge">0 Active</span>
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">સિરામિક કોટિંગ (6-મહિને ઇન્સ્પેક્શન / 12-મહિને ટોપ-અપ) અને PPF (6-મહિને એજ ચેક / 12-મહિને બૂસ્ટર) મેળવેલ વાહનો માટે ઓટોમેટેડ ફોલોઅપ.</p>
+              </div>
+            </div>
+
+            <!-- Reminder Filter Pills -->
+            <div class="flex items-center bg-white dark:bg-surface-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs self-start sm:self-auto">
+              <button id="btnCrmWarranty_all" onclick="setCrmWarrantyFilter('all')" class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs transition cursor-pointer">All</button>
+              <button id="btnCrmWarranty_due" onclick="setCrmWarrantyFilter('due')" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-xs transition cursor-pointer">Due Now / Overdue</button>
+              <button id="btnCrmWarranty_upcoming" onclick="setCrmWarrantyFilter('upcoming')" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-xs transition cursor-pointer">Upcoming</button>
+            </div>
+          </div>
+
+          <!-- Reminders Grid List -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5" id="crmWarrantyListContainer">
+            <!-- Dynamically populated reminder cards -->
+          </div>
+        </div>
+
+        <!-- Vehicle Profile & Service Timeline Card Container -->
+        <div id="crmProfileContainer" class="space-y-6">
+          <!-- Dynamically populated with Customer Profile & Chronological Timeline -->
         </div>
 
       </div>
@@ -811,6 +1065,19 @@
     // Helper: Migrate existing localStorage data to standard stage schema
     function migrateVehicleData(vehicles) {
       let changed = false;
+
+      // Seed historical delivered jobs if not already present in existing user localStorage
+      const hasJob100 = vehicles.some(v => v.id === 'JOB-100');
+      const hasJob099 = vehicles.some(v => v.id === 'JOB-099');
+      if (!hasJob100 || !hasJob099) {
+        initialVehicles.slice(2).forEach(mockJob => {
+          if (!vehicles.some(v => v.id === mockJob.id)) {
+            vehicles.push(JSON.parse(JSON.stringify(mockJob)));
+            changed = true;
+          }
+        });
+      }
+
       vehicles.forEach(car => {
         const idx = getStageIndex(car);
         if (car.stageIndex !== idx || car.stage !== STAGES[idx].title || !car.stageBadge) {
@@ -825,6 +1092,29 @@
         }
         if (typeof car.isDelivered !== 'boolean') {
           car.isDelivered = false;
+          changed = true;
+        }
+        if (!car.createdAt) {
+          car.createdAt = new Date().toISOString();
+          changed = true;
+        }
+        if (car.isDelivered && !car.billingDetails) {
+          car.billingDetails = {
+            baseAmount: car.amountTotal || 0,
+            addonAmount: 0,
+            addonDesc: '',
+            discount: 0,
+            isGst: false,
+            subtotal: car.amountTotal || 0,
+            cgst: 0,
+            sgst: 0,
+            grandTotal: car.amountTotal || 0,
+            advancePaid: car.amountAdvance || 0,
+            finalPaid: Math.max(0, (car.amountTotal || 0) - (car.amountAdvance || 0)),
+            paymentMode: 'Cash',
+            balanceRemaining: 0,
+            settledAt: car.deliveredAt || new Date().toISOString()
+          };
           changed = true;
         }
       });
@@ -851,7 +1141,8 @@
         flaws: ["Front Bumper: Scratch", "Driver Side: Door Dent"],
         amountTotal: 85000,
         amountAdvance: 40000,
-        isDelivered: false
+        isDelivered: false,
+        createdAt: new Date(Date.now() - 3 * 86400000).toISOString()
       },
       {
         id: "JOB-102",
@@ -869,7 +1160,84 @@
         flaws: [],
         amountTotal: 24000,
         amountAdvance: 10000,
-        isDelivered: false
+        isDelivered: false,
+        createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
+      },
+      {
+        id: "JOB-100",
+        isNewCar: false,
+        regNo: "GJ-03-KC-8821",
+        model: "Toyota Fortuner Legender",
+        category: "Full SUV",
+        customerName: "અમિતભાઈ શાહ",
+        customerPhone: "9879512345",
+        service: "Full Body Matte PPF",
+        stageIndex: 3,
+        stage: "૪. ફાઇનલ QC & ડિલિવરી રેડી",
+        stageBadge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30",
+        flaws: ["Rear Left Fender: Small Scratch"],
+        amountTotal: 95000,
+        amountAdvance: 50000,
+        isDelivered: true,
+        status: "Delivered",
+        invoiceNo: "INV-2026-0892",
+        gatePassNo: "GP-2026-0892",
+        createdAt: new Date(Date.now() - 190 * 86400000).toISOString(),
+        deliveredAt: new Date(Date.now() - 185 * 86400000).toISOString(),
+        billingDetails: {
+          baseAmount: 95000,
+          addonAmount: 5000,
+          addonDesc: "Alloy Wheel Ceramic Coating",
+          discount: 2000,
+          isGst: true,
+          subtotal: 98000,
+          cgst: 8820,
+          sgst: 8820,
+          grandTotal: 115640,
+          advancePaid: 50000,
+          finalPaid: 65640,
+          paymentMode: "UPI / Google Pay",
+          balanceRemaining: 0,
+          settledAt: new Date(Date.now() - 185 * 86400000).toISOString()
+        }
+      },
+      {
+        id: "JOB-099",
+        isNewCar: false,
+        regNo: "GJ-01-RX-3344",
+        model: "Kia Seltos Facelift",
+        category: "Compact SUV",
+        customerName: "ભાવિન મહેતા",
+        customerPhone: "9898011223",
+        service: "10H Graphene Ceramic Coating",
+        stageIndex: 3,
+        stage: "૪. ફાઇનલ QC & ડિલિવરી રેડી",
+        stageBadge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30",
+        flaws: [],
+        amountTotal: 28000,
+        amountAdvance: 10000,
+        isDelivered: true,
+        status: "Delivered",
+        invoiceNo: "INV-2026-0745",
+        gatePassNo: "GP-2026-0745",
+        createdAt: new Date(Date.now() - 370 * 86400000).toISOString(),
+        deliveredAt: new Date(Date.now() - 368 * 86400000).toISOString(),
+        billingDetails: {
+          baseAmount: 28000,
+          addonAmount: 0,
+          addonDesc: "",
+          discount: 1000,
+          isGst: false,
+          subtotal: 27000,
+          cgst: 0,
+          sgst: 0,
+          grandTotal: 27000,
+          advancePaid: 10000,
+          finalPaid: 17000,
+          paymentMode: "Credit/Debit Card",
+          balanceRemaining: 0,
+          settledAt: new Date(Date.now() - 368 * 86400000).toISOString()
+        }
       }
     ];
 
@@ -931,26 +1299,47 @@
     // 3. Navigation & Tab Switching
     function switchTab(tabName) {
       sessionStorage.setItem('apex_active_tab', tabName);
-      const viewDashboard = document.getElementById('viewDashboard');
-      const viewKanban = document.getElementById('viewKanban');
-      const navDashboard = document.getElementById('navDashboard');
-      const navKanban = document.getElementById('navKanban');
+      
+      const views = {
+        dashboard: document.getElementById('viewDashboard'),
+        kanban: document.getElementById('viewKanban'),
+        reports: document.getElementById('viewReports'),
+        crm: document.getElementById('viewCrm')
+      };
+      const navs = {
+        dashboard: document.getElementById('navDashboard'),
+        kanban: document.getElementById('navKanban'),
+        reports: document.getElementById('navReports'),
+        crm: document.getElementById('navCrm')
+      };
+
+      const activeBtnClass = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 shrink-0';
+      const inactiveBtnClass = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0';
+
+      Object.keys(views).forEach(key => {
+        if (views[key]) {
+          if (key === tabName) {
+            views[key].classList.remove('hidden');
+          } else {
+            views[key].classList.add('hidden');
+          }
+        }
+        if (navs[key]) {
+          if (key === tabName) {
+            navs[key].className = activeBtnClass;
+          } else {
+            navs[key].className = inactiveBtnClass;
+          }
+        }
+      });
 
       if (tabName === 'kanban') {
-        viewDashboard.classList.add('hidden');
-        viewKanban.classList.remove('hidden');
-
-        navKanban.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20';
-        navDashboard.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
-        
         renderKanban();
+      } else if (tabName === 'reports') {
+        renderReports();
+      } else if (tabName === 'crm') {
+        renderCrm();
       } else {
-        viewKanban.classList.add('hidden');
-        viewDashboard.classList.remove('hidden');
-
-        navDashboard.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition duration-150 cursor-pointer bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20';
-        navKanban.className = 'flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition duration-150 cursor-pointer text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
-
         renderDashboard();
       }
       lucide.createIcons();
@@ -1468,6 +1857,8 @@
 
       renderDashboard();
       renderKanban();
+      renderReports();
+      renderCrm();
     }
 
     // ==================== 6. INSPECTION & DETAILS MODAL LOGIC ====================
@@ -2524,6 +2915,1022 @@ Thank you for visiting Apex Auto Studio! 📞 98240 12345`;
       closeModal();
       renderAll();
     });
+
+    // ==================== 9. REPORTS & FINANCIAL ANALYTICS LOGIC ====================
+    // Helper: Format Date for Reports and Timeline
+    function formatDate(isoStr) {
+      if (!isoStr) return '--';
+      try {
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return isoStr;
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      } catch (e) {
+        return isoStr;
+      }
+    }
+
+    let currentReportsDateFilter = 'all'; // 'all', 'month', 'week', 'today'
+
+    function setReportsDateFilter(filter) {
+      currentReportsDateFilter = filter;
+      const filters = ['all', 'month', 'week', 'today'];
+      filters.forEach(f => {
+        const btn = document.getElementById(`btnFilterReport_${f}`);
+        if (btn) {
+          if (f === filter) {
+            btn.className = "px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition shadow-xs cursor-pointer";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer";
+          }
+        }
+      });
+      renderReports();
+    }
+
+    function filterVehiclesByDate(vehicles, filter) {
+      if (filter === 'all') return vehicles;
+      const now = new Date();
+      const todayStr = now.toISOString().slice(0, 10);
+
+      return vehicles.filter(car => {
+        const dateStr = car.deliveredAt || car.createdAt || new Date().toISOString();
+        const carDate = new Date(dateStr);
+        
+        if (filter === 'today') {
+          return dateStr.slice(0, 10) === todayStr;
+        }
+        if (filter === 'week') {
+          const diff = now.getTime() - carDate.getTime();
+          return diff >= 0 && diff <= 7 * 86400000;
+        }
+        if (filter === 'month') {
+          const diff = now.getTime() - carDate.getTime();
+          return diff >= 0 && diff <= 30 * 86400000;
+        }
+        return true;
+      });
+    }
+
+    function renderReports() {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const dateFiltered = filterVehiclesByDate(vehicles, currentReportsDateFilter);
+
+      // Financial Aggregations
+      const deliveredCars = dateFiltered.filter(c => c.isDelivered || c.billingDetails);
+      const activeCars = dateFiltered.filter(c => !c.isDelivered && !c.billingDetails);
+
+      let totalRevenue = 0;
+      let totalGst = 0;
+      let totalCgst = 0;
+      let totalSgst = 0;
+      let totalAdvanceRecv = 0;
+      let totalFinalPaid = 0;
+      let totalPendingDue = 0;
+
+      deliveredCars.forEach(car => {
+        const b = car.billingDetails || {};
+        const rev = b.grandTotal !== undefined ? b.grandTotal : (car.amountTotal || 0);
+        totalRevenue += rev;
+        totalCgst += (b.cgst || 0);
+        totalSgst += (b.sgst || 0);
+        totalGst += ((b.cgst || 0) + (b.sgst || 0));
+        totalAdvanceRecv += (b.advancePaid !== undefined ? b.advancePaid : (car.amountAdvance || 0));
+        totalFinalPaid += (b.finalPaid || 0);
+        totalPendingDue += (b.balanceRemaining || 0);
+      });
+
+      // Also account for advance received on active floor cars within filtered timeframe
+      let activePipeline = 0;
+      activeCars.forEach(car => {
+        activePipeline += (car.amountTotal || 0);
+        totalAdvanceRecv += (car.amountAdvance || 0);
+      });
+
+      const totalCollections = totalAdvanceRecv + totalFinalPaid;
+      const completedCount = deliveredCars.length;
+      const avgTicket = completedCount > 0 ? Math.round(totalRevenue / completedCount) : 0;
+
+      // Update KPI DOM Elements
+      const elRev = document.getElementById('reportTotalRevenue');
+      if (elRev) elRev.textContent = `₹${totalRevenue.toLocaleString('en-IN')}`;
+
+      const elActRev = document.getElementById('reportActiveRevenue');
+      if (elActRev) elActRev.textContent = `(+₹${activePipeline.toLocaleString('en-IN')} In-Shop)`;
+
+      const elGst = document.getElementById('reportTotalGst');
+      if (elGst) elGst.textContent = `₹${totalGst.toLocaleString('en-IN')}`;
+
+      const elCgst = document.getElementById('reportCgstDisplay');
+      if (elCgst) elCgst.textContent = `CGST: ₹${totalCgst.toLocaleString('en-IN')}`;
+
+      const elSgst = document.getElementById('reportSgstDisplay');
+      if (elSgst) elSgst.textContent = `SGST: ₹${totalSgst.toLocaleString('en-IN')}`;
+
+      const elAdv = document.getElementById('reportTotalAdvance');
+      if (elAdv) elAdv.textContent = `₹${totalCollections.toLocaleString('en-IN')}`;
+
+      const elDue = document.getElementById('reportPendingDue');
+      if (elDue) elDue.textContent = `₹${totalPendingDue.toLocaleString('en-IN')} Market Due`;
+
+      const elCount = document.getElementById('reportCompletedCount');
+      if (elCount) elCount.textContent = `${completedCount} Cars`;
+
+      const elAvg = document.getElementById('reportAvgTicket');
+      if (elAvg) elAvg.textContent = `Avg: ₹${avgTicket.toLocaleString('en-IN')} / car`;
+
+      // 2. Service Category Breakdown
+      const categories = [
+        {
+          id: 'ppf',
+          name: 'Paint Protection Film (PPF)',
+          icon: 'shield',
+          color: 'purple',
+          barColor: 'bg-purple-500',
+          match: (s) => s.includes('ppf')
+        },
+        {
+          id: 'ceramic',
+          name: 'Ceramic & Graphene Coating',
+          icon: 'sparkles',
+          color: 'emerald',
+          barColor: 'bg-emerald-500',
+          match: (s) => s.includes('ceramic') || s.includes('graphene') || s.includes('coating')
+        },
+        {
+          id: 'paint',
+          name: 'Paint Correction & Rubbing',
+          icon: 'wrench',
+          color: 'amber',
+          barColor: 'bg-amber-500',
+          match: (s) => s.includes('paint') || s.includes('polish') || s.includes('rubbing') || s.includes('correction')
+        },
+        {
+          id: 'wash',
+          name: 'Deep Cleaning & Detailing Spa',
+          icon: 'droplets',
+          color: 'blue',
+          barColor: 'bg-blue-500',
+          match: (s) => true // fallback
+        }
+      ];
+
+      // Calculate totals per category
+      const catStats = {
+        ppf: { count: 0, revenue: 0 },
+        ceramic: { count: 0, revenue: 0 },
+        paint: { count: 0, revenue: 0 },
+        wash: { count: 0, revenue: 0 }
+      };
+
+      let categoryTotalSum = 0;
+
+      dateFiltered.forEach(car => {
+        const s = (car.service || '').toLowerCase();
+        let catKey = 'wash';
+        if (categories[0].match(s)) catKey = 'ppf';
+        else if (categories[1].match(s)) catKey = 'ceramic';
+        else if (categories[2].match(s)) catKey = 'paint';
+
+        const rev = car.billingDetails?.grandTotal || car.amountTotal || 0;
+        catStats[catKey].count += 1;
+        catStats[catKey].revenue += rev;
+        categoryTotalSum += rev;
+      });
+
+      const catTotalEl = document.getElementById('reportCategoryTotalDisplay');
+      if (catTotalEl) catTotalEl.textContent = `Total Sales: ₹${categoryTotalSum.toLocaleString('en-IN')}`;
+
+      const catContainer = document.getElementById('reportCategoryContainer');
+      if (catContainer) {
+        catContainer.innerHTML = categories.map(cat => {
+          const stats = catStats[cat.id];
+          const pct = categoryTotalSum > 0 ? Math.round((stats.revenue / categoryTotalSum) * 100) : 0;
+          return `
+            <div class="p-3.5 bg-slate-50 dark:bg-surface-900/60 border border-slate-200 dark:border-slate-700/60 rounded-xl space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg bg-${cat.color}-500/10 text-${cat.color}-600 dark:text-${cat.color}-400 flex items-center justify-center">
+                    <i data-lucide="${cat.icon}" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200">${cat.name}</span>
+                </div>
+                <span class="text-xs font-bold font-mono text-slate-900 dark:text-white">₹${stats.revenue.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                <span>${stats.count} Jobs (${pct}%)</span>
+                <span>Share of Portfolio</span>
+              </div>
+              <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div class="h-full ${cat.barColor} rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 3. Comprehensive Table
+      const search = (document.getElementById('reportsSearchInput')?.value || '').toLowerCase().trim();
+      const payFilter = document.getElementById('reportsFilterPayment')?.value || 'all';
+
+      let tableCars = dateFiltered.filter(car => {
+        const b = car.billingDetails || {};
+        const qMatch = !search || 
+          (car.regNo || '').toLowerCase().includes(search) ||
+          (car.tempId || '').toLowerCase().includes(search) ||
+          (car.model || '').toLowerCase().includes(search) ||
+          (car.customerName || '').toLowerCase().includes(search) ||
+          (car.customerPhone || '').includes(search) ||
+          (car.service || '').toLowerCase().includes(search) ||
+          (car.invoiceNo || '').toLowerCase().includes(search);
+
+        let pMatch = true;
+        if (payFilter !== 'all') {
+          const mode = (b.paymentMode || '').toLowerCase();
+          pMatch = mode.includes(payFilter.toLowerCase());
+        }
+
+        return qMatch && pMatch;
+      });
+
+      // Sort by date descending
+      tableCars.sort((a, b) => {
+        const dateA = new Date(a.deliveredAt || a.createdAt || 0).getTime();
+        const dateB = new Date(b.deliveredAt || b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
+
+      const tbody = document.getElementById('reportsTableBody');
+      let subtotalSum = 0;
+      let gstSum = 0;
+      let grandSum = 0;
+
+      if (tbody) {
+        if (tableCars.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="p-8 text-center text-slate-400 dark:text-slate-500">
+                <i data-lucide="receipt" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+                <p class="font-medium">આ ફિલ્ટરમાં કોઈ બિલિંગ રેકોર્ડ મળ્યો નથી</p>
+                <p class="text-[11px] mt-0.5">કૃપા કરીને ફિલ્ટર બદલો અથવા નવું વાહન ચેકઆઉટ કરો.</p>
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = tableCars.map(car => {
+            const b = car.billingDetails || {};
+            const dateStr = car.deliveredAt ? formatDate(car.deliveredAt) : (car.createdAt ? formatDate(car.createdAt) : '--');
+            const invNo = car.invoiceNo || car.id;
+            const subtotal = b.subtotal !== undefined ? b.subtotal : (car.amountTotal || 0);
+            const totalTax = (b.cgst || 0) + (b.sgst || 0);
+            const grand = b.grandTotal !== undefined ? b.grandTotal : (car.amountTotal || 0);
+
+            subtotalSum += subtotal;
+            gstSum += totalTax;
+            grandSum += grand;
+
+            const isGst = b.isGst;
+            const gstBadge = isGst ? 
+              `<span class="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-mono text-[10px] font-bold">GST 18% (CGST: ₹${b.cgst} | SGST: ₹${b.sgst})</span>` :
+              `<span class="bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded text-[10px] font-medium">Non-GST / Estimate</span>`;
+
+            const modeBadge = b.paymentMode ?
+              `<span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20 text-[10px] font-semibold">${b.paymentMode}</span>` :
+              `<span class="text-slate-400 text-[11px] italic">Pending</span>`;
+
+            // Vehicle Plate Badge
+            let plateBadge = '';
+            if (car.isNewCar || car.tempId) {
+              plateBadge = `<span class="bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-mono font-bold text-[10px]">${car.tempId || 'TEMP'}</span>`;
+            } else {
+              plateBadge = `<span class="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-600 px-2 py-0.5 rounded font-mono font-bold text-[10px]">${car.regNo || '-'}</span>`;
+            }
+
+            return `
+              <tr class="hover:bg-slate-50/80 dark:hover:bg-surface-700/30 transition-colors">
+                <td class="p-3.5 pl-5">
+                  <div class="font-bold font-mono text-slate-900 dark:text-white">${invNo}</div>
+                  <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                    <span>${dateStr}</span>
+                  </div>
+                </td>
+                <td class="p-3.5">
+                  <div class="flex items-center gap-1.5">${plateBadge}</div>
+                  <div class="text-[11px] font-semibold text-slate-800 dark:text-slate-200 mt-1">${car.model}</div>
+                </td>
+                <td class="p-3.5">
+                  <div class="font-medium text-slate-900 dark:text-white">${car.customerName}</div>
+                  <a href="https://wa.me/91${(car.customerPhone || '').replace(/\D/g, '')}" target="_blank" class="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 mt-0.5">
+                    <i data-lucide="phone" class="w-3 h-3"></i>
+                    <span>${car.customerPhone}</span>
+                  </a>
+                </td>
+                <td class="p-3.5">
+                  <div class="text-xs font-medium text-slate-700 dark:text-slate-300 max-w-[160px] truncate" title="${car.service}">${car.service}</div>
+                </td>
+                <td class="p-3.5">
+                  ${modeBadge}
+                </td>
+                <td class="p-3.5">
+                  ${gstBadge}
+                </td>
+                <td class="p-3.5 text-right font-mono">
+                  <div class="text-xs font-bold text-slate-900 dark:text-white">₹${grand.toLocaleString('en-IN')}</div>
+                  <div class="text-[10px] ${car.isDelivered ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'} font-semibold">
+                    ${car.isDelivered ? 'Settled' : 'In Shop'}
+                  </div>
+                </td>
+                <td class="p-3.5 pr-5 text-center">
+                  <button onclick="openCheckoutModal('${car.id}')" 
+                    class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-lg text-xs font-semibold flex items-center gap-1 transition mx-auto cursor-pointer" title="View or Print Invoice">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                    <span>Invoice</span>
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // Update table summary footer
+      const elCountDisp = document.getElementById('reportsTableCountDisplay');
+      if (elCountDisp) elCountDisp.textContent = `Showing ${tableCars.length} of ${dateFiltered.length} records`;
+
+      const elSubDisp = document.getElementById('reportsTableSubtotalDisplay');
+      if (elSubDisp) elSubDisp.textContent = `₹${subtotalSum.toLocaleString('en-IN')}`;
+
+      const elGstDisp = document.getElementById('reportsTableGstDisplay');
+      if (elGstDisp) elGstDisp.textContent = `₹${gstSum.toLocaleString('en-IN')}`;
+
+      const elGrandDisp = document.getElementById('reportsTableGrandDisplay');
+      if (elGrandDisp) elGrandDisp.textContent = `₹${grandSum.toLocaleString('en-IN')}`;
+
+      lucide.createIcons();
+    }
+
+    // Export Reports as CSV
+    function exportReportsCSV() {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const dateFiltered = filterVehiclesByDate(vehicles, currentReportsDateFilter);
+
+      if (dateFiltered.length === 0) {
+        alert('આ ફિલ્ટરમાં કોઈ ડેટા નથી!');
+        return;
+      }
+
+      const headers = [
+        "Date",
+        "Invoice No",
+        "Gate Pass No",
+        "Job ID",
+        "Registration / Temp ID",
+        "Vehicle Model",
+        "Category",
+        "Customer Name",
+        "Customer Phone",
+        "Service Rendered",
+        "Pre-inspection Flaws Count",
+        "Base Amount (INR)",
+        "Addon Amount (INR)",
+        "Addon Description",
+        "Discount (INR)",
+        "Subtotal (INR)",
+        "CGST 9% (INR)",
+        "SGST 9% (INR)",
+        "Grand Total (INR)",
+        "Advance Paid (INR)",
+        "Final Paid (INR)",
+        "Balance Remaining (INR)",
+        "Payment Mode",
+        "GST Applicable",
+        "Status"
+      ];
+
+      const rows = dateFiltered.map(car => {
+        const b = car.billingDetails || {};
+        const dateStr = car.deliveredAt ? car.deliveredAt.slice(0, 10) : (car.createdAt ? car.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10));
+        const reg = car.regNo || car.tempId || '-';
+        const isGst = b.isGst ? "GST 18%" : "Non-GST";
+        const status = car.isDelivered ? "Delivered / Closed" : (car.stage || "In-Shop");
+
+        return [
+          dateStr,
+          car.invoiceNo || "-",
+          car.gatePassNo || "-",
+          car.id,
+          reg,
+          car.model,
+          car.category || "-",
+          car.customerName,
+          car.customerPhone,
+          car.service,
+          (car.flaws || []).length,
+          b.baseAmount !== undefined ? b.baseAmount : (car.amountTotal || 0),
+          b.addonAmount || 0,
+          b.addonDesc || "-",
+          b.discount || 0,
+          b.subtotal !== undefined ? b.subtotal : (car.amountTotal || 0),
+          b.cgst || 0,
+          b.sgst || 0,
+          b.grandTotal !== undefined ? b.grandTotal : (car.amountTotal || 0),
+          b.advancePaid !== undefined ? b.advancePaid : (car.amountAdvance || 0),
+          b.finalPaid || 0,
+          b.balanceRemaining !== undefined ? b.balanceRemaining : Math.max(0, (car.amountTotal || 0) - (car.amountAdvance || 0)),
+          b.paymentMode || "Pending",
+          isGst,
+          status
+        ].map(val => `"${String(val).replace(/"/g, '""')}"`).join(",");
+      });
+
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const dateTag = new Date().toISOString().slice(0, 10);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Apex_Auto_Studio_Financial_Report_${dateTag}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // ==================== 10. CRM, SERVICE HISTORY & WARRANTY ENGINE LOGIC ====================
+    let currentCrmSearchQuery = '';
+    let currentCrmSelectedVehicleId = null;
+    let currentCrmWarrantyFilter = 'all'; // 'all', 'due', 'upcoming'
+
+    function handleCrmSearch() {
+      const input = document.getElementById('crmSearchInput');
+      currentCrmSearchQuery = (input ? input.value : '').trim().toLowerCase();
+      
+      const clearBtn = document.getElementById('crmClearSearchBtn');
+      if (clearBtn) {
+        if (currentCrmSearchQuery.length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+
+      currentCrmSelectedVehicleId = null; // reset specific selection when searching
+      renderCrm();
+    }
+
+    function clearCrmSearch() {
+      const input = document.getElementById('crmSearchInput');
+      if (input) input.value = '';
+      currentCrmSearchQuery = '';
+      currentCrmSelectedVehicleId = null;
+      const clearBtn = document.getElementById('crmClearSearchBtn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      renderCrm();
+    }
+
+    function setCrmWarrantyFilter(filter) {
+      currentCrmWarrantyFilter = filter;
+      const filters = ['all', 'due', 'upcoming'];
+      filters.forEach(f => {
+        const btn = document.getElementById(`btnCrmWarranty_${f}`);
+        if (btn) {
+          if (f === filter) {
+            btn.className = "px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs transition cursor-pointer";
+          } else {
+            btn.className = "px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-xs transition cursor-pointer";
+          }
+        }
+      });
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      renderCrmWarrantyPanel(vehicles);
+    }
+
+    function selectCrmVehicle(vehicleId) {
+      currentCrmSelectedVehicleId = vehicleId;
+      renderCrm();
+      const profileBox = document.getElementById('crmProfileContainer');
+      if (profileBox) {
+        profileBox.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Warranty & Maintenance Engine Calculator
+    function getWarrantyReminders(vehicles) {
+      const reminders = [];
+      const now = Date.now();
+
+      vehicles.forEach(car => {
+        const s = (car.service || '').toLowerCase();
+        const isCeramic = s.includes('ceramic') || s.includes('graphene') || s.includes('coating');
+        const isPpf = s.includes('ppf');
+
+        if (!isCeramic && !isPpf) return;
+
+        const baseDate = new Date(car.deliveredAt || car.createdAt || now);
+        const daysElapsed = Math.floor((now - baseDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (isCeramic) {
+          // 6-Month Inspection: target 180 days
+          if (daysElapsed >= 140 && daysElapsed < 270) {
+            const isOverdue = daysElapsed > 185;
+            const daysDiff = daysElapsed - 180;
+            reminders.push({
+              vehicleId: car.id,
+              car: car,
+              type: "૬-મહિનાનું સિરામિક ઇન્સ્પેક્શન & ડીકોન્ટેમિનેશન",
+              typeEn: "6-Month Ceramic Inspection & Decon Wash",
+              category: "Ceramic",
+              baseDate: baseDate,
+              daysElapsed: daysElapsed,
+              targetDays: 180,
+              isOverdue: isOverdue,
+              statusLabel: isOverdue ? `🚨 Due Now (${Math.abs(daysDiff)} દિવસ મોડું)` : `📅 Upcoming (${Math.abs(daysDiff)} દિવસમાં)`,
+              statusSeverity: isOverdue ? 'due' : 'upcoming'
+            });
+          }
+          // 12-Month Annual Top-up: target 365 days
+          if (daysElapsed >= 320) {
+            const isOverdue = daysElapsed > 365;
+            const daysDiff = daysElapsed - 365;
+            reminders.push({
+              vehicleId: car.id,
+              car: car,
+              type: "૧-વર્ષનું એન્યુઅલ સિરામિક ટોપ-અપ & હાઈડ્રોફોબિક બૂસ્ટર",
+              typeEn: "12-Month Annual Top-up & Hydrophobic Booster",
+              category: "Ceramic",
+              baseDate: baseDate,
+              daysElapsed: daysElapsed,
+              targetDays: 365,
+              isOverdue: isOverdue,
+              statusLabel: isOverdue ? `🚨 Due Now (${Math.abs(daysDiff)} દિવસ મોડું)` : `📅 Upcoming (${Math.abs(daysDiff)} દિવસમાં)`,
+              statusSeverity: isOverdue ? 'due' : 'upcoming'
+            });
+          }
+          if (daysElapsed < 140) {
+            const daysRemaining = 180 - daysElapsed;
+            reminders.push({
+              vehicleId: car.id,
+              car: car,
+              type: "૬-મહિનાનું સિરામિક ઇન્સ્પેક્શન (શેડ્યૂલ)",
+              typeEn: "6-Month Ceramic Inspection",
+              category: "Ceramic",
+              baseDate: baseDate,
+              daysElapsed: daysElapsed,
+              targetDays: 180,
+              isOverdue: false,
+              statusLabel: `📅 ${daysRemaining} દિવસ પછી નિર્ધારિત`,
+              statusSeverity: 'upcoming'
+            });
+          }
+        }
+
+        if (isPpf) {
+          // 6-Month Edge Check: target 180 days
+          if (daysElapsed >= 140 && daysElapsed < 270) {
+            const isOverdue = daysElapsed > 185;
+            const daysDiff = daysElapsed - 180;
+            reminders.push({
+              vehicleId: car.id,
+              car: car,
+              type: "૬-મહિનાનું PPF એજ ચેક & સીલન્ટ ઇન્સ્પેક્શન",
+              typeEn: "6-Month PPF Edge Inspection & Sealant Check",
+              category: "PPF",
+              baseDate: baseDate,
+              daysElapsed: daysElapsed,
+              targetDays: 180,
+              isOverdue: isOverdue,
+              statusLabel: isOverdue ? `🚨 Due Now (${Math.abs(daysDiff)} દિવસ મોડું)` : `📅 Upcoming (${Math.abs(daysDiff)} દિવસમાં)`,
+              statusSeverity: isOverdue ? 'due' : 'upcoming'
+            });
+          }
+          // 12-Month Treatment: target 365 days
+          if (daysElapsed >= 320) {
+            const isOverdue = daysElapsed > 365;
+            const daysDiff = daysElapsed - 365;
+            reminders.push({
+              vehicleId: car.id,
+              car: car,
+              type: "૧-વર્ષનું PPF એન્યુઅલ ગ્લોસ ટ્રીટમેન્ટ & વોરંટી વેલિડેશન",
+              typeEn: "12-Month PPF Annual Gloss Treatment",
+              category: "PPF",
+              baseDate: baseDate,
+              daysElapsed: daysElapsed,
+              targetDays: 365,
+              isOverdue: isOverdue,
+              statusLabel: isOverdue ? `🚨 Due Now (${Math.abs(daysDiff)} દિવસ મોડું)` : `📅 Upcoming (${Math.abs(daysDiff)} દિવસમાં)`,
+              statusSeverity: isOverdue ? 'due' : 'upcoming'
+            });
+          }
+          if (daysElapsed < 140) {
+            const daysRemaining = 180 - daysElapsed;
+            reminders.push({
+              vehicleId: car.id,
+              car: car,
+              type: "૬-મહિનાનું PPF એજ ઇન્સ્પેક્શન (શેડ્યૂલ)",
+              typeEn: "6-Month PPF Edge Inspection",
+              category: "PPF",
+              baseDate: baseDate,
+              daysElapsed: daysElapsed,
+              targetDays: 180,
+              isOverdue: false,
+              statusLabel: `📅 ${daysRemaining} દિવસ પછી નિર્ધારિત`,
+              statusSeverity: 'upcoming'
+            });
+          }
+        }
+      });
+
+      // Sort: overdue first, then nearest targetDays
+      reminders.sort((a, b) => {
+        if (a.isOverdue && !b.isOverdue) return -1;
+        if (!a.isOverdue && b.isOverdue) return 1;
+        return b.daysElapsed - a.daysElapsed;
+      });
+
+      return reminders;
+    }
+
+    // Render Warranty Panel
+    function renderCrmWarrantyPanel(vehicles) {
+      const reminders = getWarrantyReminders(vehicles);
+      const overdueCount = reminders.filter(r => r.isOverdue).length;
+
+      // Update Nav CRM Badge
+      const navBadge = document.getElementById('navCrmReminderCount');
+      if (navBadge) {
+        if (overdueCount > 0) {
+          navBadge.textContent = overdueCount;
+          navBadge.classList.remove('hidden');
+        } else {
+          navBadge.classList.add('hidden');
+        }
+      }
+
+      // Update Panel Badge
+      const panelBadge = document.getElementById('crmRemindersBadge');
+      if (panelBadge) panelBadge.textContent = `${reminders.length} Reminders (${overdueCount} Overdue)`;
+
+      // Filter reminders
+      let filtered = reminders;
+      if (currentCrmWarrantyFilter === 'due') {
+        filtered = reminders.filter(r => r.isOverdue);
+      } else if (currentCrmWarrantyFilter === 'upcoming') {
+        filtered = reminders.filter(r => !r.isOverdue);
+      }
+
+      const container = document.getElementById('crmWarrantyListContainer');
+      if (!container) return;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full p-6 text-center text-slate-400 dark:text-slate-500 bg-white dark:bg-surface-800 rounded-xl border border-slate-200 dark:border-slate-700/60">
+            <i data-lucide="shield-check" class="w-8 h-8 mx-auto mb-1.5 text-emerald-500 opacity-60"></i>
+            <p class="text-xs font-semibold">આ ફિલ્ટરમાં કોઈ વોરંટી અથવા સર્વિસ રીમાઇન્ડર નથી</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const car = item.car;
+        const phone = (car.customerPhone || '').replace(/\D/g, '');
+        const plate = car.regNo || car.tempId || 'Car';
+
+        const badgeClass = item.isOverdue ?
+          'bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30' :
+          'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30';
+
+        const catIcon = item.category === 'PPF' ? 'shield' : 'sparkles';
+        const catColor = item.category === 'PPF' ? 'text-purple-600 dark:text-purple-400' : 'text-emerald-600 dark:text-emerald-400';
+
+        return `
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 shadow-sm dark:shadow-none space-y-3 flex flex-col justify-between hover:border-amber-500/50 transition">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-xs bg-slate-100 dark:bg-surface-900 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">${plate}</span>
+                <span class="px-2 py-0.5 rounded-full border text-[10px] font-bold ${badgeClass}">
+                  ${item.statusLabel}
+                </span>
+              </div>
+
+              <div>
+                <h4 class="font-bold text-slate-900 dark:text-white text-xs">${car.model}</h4>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between mt-0.5">
+                  <span>${car.customerName}</span>
+                  <a href="tel:${phone}" class="text-amber-600 dark:text-amber-400 hover:underline font-mono">${car.customerPhone}</a>
+                </div>
+              </div>
+
+              <div class="p-2.5 bg-slate-50 dark:bg-surface-900/70 rounded-lg border border-slate-100 dark:border-slate-800 text-[11px] space-y-1">
+                <div class="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200">
+                  <i data-lucide="${catIcon}" class="w-3.5 h-3.5 ${catColor}"></i>
+                  <span class="truncate">${item.type}</span>
+                </div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
+                  <span>મૂળ સર્વિસ: ${car.service}</span>
+                  <span>(${item.daysElapsed}d ago)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-1 flex items-center gap-2">
+              <button onclick="sendWhatsAppWarrantyReminder('${car.id}', '${item.type}')" 
+                class="flex-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                <span>Send WhatsApp Reminder</span>
+              </button>
+              <button onclick="selectCrmVehicle('${car.id}')" title="View History" 
+                class="p-1.5 bg-slate-100 dark:bg-surface-700 text-slate-600 dark:text-slate-300 hover:text-amber-500 rounded-lg border border-slate-200 dark:border-slate-600 transition cursor-pointer">
+                <i data-lucide="history" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Send WhatsApp Warranty Followup
+    function sendWhatsAppWarrantyReminder(vehicleId, reminderType) {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      const phone = (car.customerPhone || '').replace(/\D/g, '');
+      const plate = car.regNo || car.tempId || 'Car';
+      const name = car.customerName || 'સર';
+      const model = car.model || '';
+
+      const text = 
+`નમસ્તે ${name} જી! 🙏
+
+🌟 *Apex Auto Studio, Rajkot* તરફથી નમસ્કાર.
+
+આપની ગાડી *${model} (${plate})* પર કરાવેલ *${car.service}* ના નિયમિત વોરંટી શેડ્યૂલ અનુસાર:
+📌 *${reminderType}* નો સમય થઈ ગયો છે.
+
+🛡️ કોટિંગ/PPF ની સંપૂર્ણ ચમક, હાઇડ્રોફોબિક અસર અને વોરંટી વેલિડિટી જાળવવા માટે સમયસર ઇન્સ્પેક્શન કરાવવું જરૂરી છે.
+
+📅 આપનો અનુકૂળ સમય સ્લોટ બુક કરવા અથવા ફ્રી પિકઅપ-ડ્રોપ માટે આ મેસેજ પર રીપ્લાય કરો અથવા સંપર્ક કરો.
+
+📍 *Apex Auto Studio*
+કાલાવડ રોડ, રાજકોટ.
+📞 98250-12345 | 94260-98765`;
+
+      const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(text)}`;
+      window.open(waUrl, '_blank');
+    }
+
+    // Main CRM Render Function
+    function renderCrm() {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      
+      // 1. Render Warranty Followup Panel
+      renderCrmWarrantyPanel(vehicles);
+
+      // 2. Render Customer Profile & Timeline
+      const container = document.getElementById('crmProfileContainer');
+      if (!container) return;
+
+      // Filter vehicles based on search or selection
+      const q = currentCrmSearchQuery;
+      let matchedVehicles = vehicles;
+
+      if (currentCrmSelectedVehicleId) {
+        matchedVehicles = vehicles.filter(v => v.id === currentCrmSelectedVehicleId);
+      } else if (q.length > 0) {
+        matchedVehicles = vehicles.filter(car => {
+          return (car.regNo || '').toLowerCase().includes(q) ||
+            (car.tempId || '').toLowerCase().includes(q) ||
+            (car.model || '').toLowerCase().includes(q) ||
+            (car.customerName || '').toLowerCase().includes(q) ||
+            (car.customerPhone || '').includes(q) ||
+            (car.chassisLast6 || '').includes(q);
+        });
+      }
+
+      // If exactly 1 vehicle matches or 1 is explicitly selected, display its full Customer Profile & Timeline
+      if (currentCrmSelectedVehicleId || (matchedVehicles.length === 1 && q.length > 0)) {
+        const primaryCar = matchedVehicles[0];
+        
+        // Find all history jobs for this customer (match by phone or regNo)
+        const customerPhone = primaryCar.customerPhone;
+        const regPlate = primaryCar.regNo;
+        const allJobsForCustomer = vehicles.filter(v => 
+          (v.customerPhone && v.customerPhone === customerPhone) || 
+          (regPlate && v.regNo === regPlate)
+        );
+
+        allJobsForCustomer.sort((a, b) => new Date(b.deliveredAt || b.createdAt || 0) - new Date(a.deliveredAt || a.createdAt || 0));
+
+        let lifetimeSpend = 0;
+        allJobsForCustomer.forEach(j => {
+          lifetimeSpend += (j.billingDetails?.grandTotal || j.amountTotal || 0);
+        });
+
+        // VIP Tier Calculation
+        let tierBadge = '';
+        if (lifetimeSpend >= 50000) {
+          tierBadge = '<span class="bg-gradient-to-r from-amber-500/20 to-purple-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-lg text-xs font-black flex items-center gap-1 shadow-xs">💎 Diamond VIP Client</span>';
+        } else if (lifetimeSpend >= 20000) {
+          tierBadge = '<span class="bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">🥇 Gold Valued Client</span>';
+        } else {
+          tierBadge = '<span class="bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">🥈 Silver Client</span>';
+        }
+
+        const phoneClean = (primaryCar.customerPhone || '').replace(/\D/g, '');
+        const plateDisplay = primaryCar.regNo || primaryCar.tempId || 'TEMP-ID';
+
+        container.innerHTML = `
+          <!-- Customer Profile Header Card -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 sm:p-6 shadow-sm dark:shadow-none space-y-4 transition-colors">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-700/80 pb-4">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center justify-center font-black text-xl shadow-xs">
+                  ${(primaryCar.customerName || 'A').slice(0, 2)}
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">${primaryCar.customerName}</h2>
+                    ${tierBadge}
+                  </div>
+                  <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <span class="font-mono">${primaryCar.customerPhone}</span>
+                    <span>•</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-300">${primaryCar.model}</span>
+                    <span>•</span>
+                    <span class="font-mono bg-slate-100 dark:bg-surface-900 px-2 py-0.2 rounded border border-slate-200 dark:border-slate-700">${plateDisplay}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact CTA Buttons -->
+              <div class="flex items-center gap-2">
+                <a href="tel:${phoneClean}" class="px-3 py-1.5 bg-slate-100 dark:bg-surface-700 text-slate-700 dark:text-slate-200 hover:text-amber-500 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-slate-200 dark:border-slate-600 transition">
+                  <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+                  <span>Call</span>
+                </a>
+                <a href="https://wa.me/91${phoneClean}" target="_blank" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                  <span>WhatsApp</span>
+                </a>
+                ${currentCrmSelectedVehicleId ? `
+                  <button onclick="currentCrmSelectedVehicleId=null;renderCrm();" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg text-xs" title="Close Profile">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Lifetime Metrics Bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div class="p-3 bg-slate-50 dark:bg-surface-900/60 rounded-xl border border-slate-200 dark:border-slate-700/60">
+                <span class="text-[11px] text-slate-500 dark:text-slate-400 block">લાઇફટાઇમ સ્પેન્ડ (Total Spent)</span>
+                <span class="text-base font-extrabold font-mono text-amber-600 dark:text-amber-400">₹${lifetimeSpend.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="p-3 bg-slate-50 dark:bg-surface-900/60 rounded-xl border border-slate-200 dark:border-slate-700/60">
+                <span class="text-[11px] text-slate-500 dark:text-slate-400 block">સ્ટુડિયો વિઝિટ્સ (Visits)</span>
+                <span class="text-base font-extrabold font-mono text-slate-900 dark:text-white">${allJobsForCustomer.length} Visits</span>
+              </div>
+              <div class="p-3 bg-slate-50 dark:bg-surface-900/60 rounded-xl border border-slate-200 dark:border-slate-700/60 col-span-2 sm:col-span-1">
+                <span class="text-[11px] text-slate-500 dark:text-slate-400 block">વાહન રજિસ્ટ્રેશન / ચેસિસ</span>
+                <span class="text-xs font-bold font-mono text-slate-800 dark:text-slate-200">${primaryCar.regNo || primaryCar.tempId} ${primaryCar.chassisLast6 ? `(Chassis: •••${primaryCar.chassisLast6})` : ''}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chronological Service Timeline Card -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 sm:p-6 shadow-sm dark:shadow-none space-y-5 transition-colors">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/80 pb-3">
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                <i data-lucide="history" class="w-4 h-4 text-amber-500"></i>
+                સર્વિસ હિસ્ટ્રી ટાઇમલાઇન (Chronological Service Timeline)
+              </h3>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">${allJobsForCustomer.length} Total Visits Recorded</span>
+            </div>
+
+            <!-- Timeline Entries -->
+            <div class="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700">
+              ${allJobsForCustomer.map((job, idx) => {
+                const b = job.billingDetails || {};
+                const dateStr = job.deliveredAt ? formatDate(job.deliveredAt) : (job.createdAt ? formatDate(job.createdAt) : '--');
+                const flaws = job.flaws || [];
+                const invGrand = b.grandTotal !== undefined ? b.grandTotal : (job.amountTotal || 0);
+
+                let flawsHtml = '';
+                if (flaws.length === 0) {
+                  flawsHtml = '<span class="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-semibold flex items-center gap-1 w-fit"><i data-lucide="check" class="w-3 h-3"></i> Clean Body (Zero Flaws Logged)</span>';
+                } else {
+                  flawsHtml = `
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <span class="text-[10px] font-bold text-rose-600 dark:text-rose-400">${flaws.length} Intake Flaws:</span>
+                      ${flaws.map(f => `<span class="bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20 px-1.5 py-0.2 rounded text-[10px]">${f}</span>`).join('')}
+                    </div>
+                  `;
+                }
+
+                return `
+                  <div class="relative group">
+                    <!-- Timeline Node -->
+                    <div class="absolute -left-[29px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white dark:border-surface-800 shadow-sm flex items-center justify-center"></div>
+
+                    <!-- Job Card -->
+                    <div class="bg-slate-50 dark:bg-surface-900/60 border border-slate-200 dark:border-slate-700/70 rounded-xl p-4 space-y-3 hover:border-slate-400 dark:hover:border-slate-500 transition">
+                      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <div>
+                          <div class="flex items-center gap-2">
+                            <span class="text-xs font-black text-slate-900 dark:text-white">${job.service}</span>
+                            <span class="font-mono text-[10px] bg-slate-200 dark:bg-surface-700 px-1.5 py-0.2 rounded text-slate-700 dark:text-slate-300">${job.id}</span>
+                          </div>
+                          <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                            <i data-lucide="calendar" class="w-3 h-3"></i>
+                            <span>${dateStr}</span>
+                            ${job.invoiceNo ? `<span>• Inv: <b class="font-mono text-slate-700 dark:text-slate-300">${job.invoiceNo}</b></span>` : ''}
+                          </div>
+                        </div>
+
+                        <div class="text-right sm:self-center">
+                          <div class="text-xs font-black font-mono text-slate-900 dark:text-white">₹${invGrand.toLocaleString('en-IN')}</div>
+                          <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">${b.paymentMode || 'Settled'}</span>
+                        </div>
+                      </div>
+
+                      <!-- Intake Condition Log -->
+                      <div>
+                        ${flawsHtml}
+                      </div>
+
+                      <!-- Actions -->
+                      <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-200 dark:border-slate-800/80">
+                        <button onclick="openCheckoutModal('${job.id}')" 
+                          class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-lg text-xs font-bold flex items-center gap-1 transition cursor-pointer">
+                          <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                          <span>View Tax Invoice / Gate Pass</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        // Customer Directory Grid View (All Customers or Matching Search)
+        container.innerHTML = `
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm dark:shadow-none space-y-4 transition-colors">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/80 pb-3">
+              <div>
+                <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-amber-500"></i>
+                  કસ્ટમર ડિરેક્ટરી & સર્વિસ પ્રોફાઇલ્સ (Customer Directory)
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">કોઈપણ વાહન પર ક્લિક કરી સંપૂર્ણ સર્વિસ ટાઇમલાઇન અને લાઇફટાઇમ સ્પેન્ડ જુઓ</p>
+              </div>
+              <span class="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400">${matchedVehicles.length} Vehicles</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              ${matchedVehicles.map(car => {
+                const plate = car.regNo || car.tempId || 'TEMP-ID';
+                const total = car.billingDetails?.grandTotal || car.amountTotal || 0;
+
+                return `
+                  <div onclick="selectCrmVehicle('${car.id}')" 
+                    class="p-4 bg-slate-50 dark:bg-surface-900/60 border border-slate-200 dark:border-slate-700/70 rounded-xl hover:border-amber-500/70 hover:shadow-md transition cursor-pointer space-y-3 group">
+                    <div class="flex items-center justify-between">
+                      <span class="font-mono font-bold text-xs bg-slate-200 dark:bg-surface-800 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded border border-slate-300 dark:border-slate-700">${plate}</span>
+                      <span class="text-[10px] font-bold ${car.isDelivered ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}">
+                        ${car.isDelivered ? 'Delivered' : 'In Workshop'}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 class="font-bold text-xs text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition">${car.model}</h4>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between mt-0.5">
+                        <span>${car.customerName}</span>
+                        <span class="font-mono">${car.customerPhone}</span>
+                      </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                      <div>
+                        <span class="text-[10px] text-slate-400 block">Total Spend</span>
+                        <span class="font-mono font-bold text-slate-900 dark:text-white">₹${total.toLocaleString('en-IN')}</span>
+                      </div>
+                      <span class="text-[11px] text-amber-600 dark:text-amber-400 font-semibold group-hover:translate-x-0.5 transition flex items-center gap-1">
+                        Timeline ➔
+                      </span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
 
     // Start App with persisted theme & auth check
     initTheme();
