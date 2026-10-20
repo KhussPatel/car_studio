@@ -214,19 +214,19 @@
             <!-- 3. Accounts & Finance -->
             <button id="navAccounts" onclick="switchTab('accounts'); toggleSidebar(false);" 
               class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition duration-150 cursor-pointer font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-800/60 border-l-4 border-transparent">
-              <div class="flex items-center gap-3">
-                <i data-lucide="wallet" class="w-4 h-4"></i>
-                <span>Accounts & Finance</span>
+              <div class="flex items-center gap-3 min-w-0">
+                <i data-lucide="wallet" class="w-4 h-4 shrink-0"></i>
+                <span class="whitespace-nowrap">Accounts & Finance</span>
               </div>
-              <span id="navAccountsDueBadge" class="bg-rose-500/20 text-rose-600 dark:text-rose-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold hidden">0</span>
+              <span id="navAccountsDueBadge" class="bg-rose-500/20 text-rose-600 dark:text-rose-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold hidden shrink-0">0</span>
             </button>
 
-            <!-- 4. Reports & Revenue -->
+            <!-- 4. Reports -->
             <button id="navReports" onclick="switchTab('reports'); toggleSidebar(false);" 
               class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition duration-150 cursor-pointer font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-800/60 border-l-4 border-transparent">
-              <div class="flex items-center gap-3">
-                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
-                <span>Reports & Revenue</span>
+              <div class="flex items-center gap-3 min-w-0">
+                <i data-lucide="bar-chart-3" class="w-4 h-4 shrink-0"></i>
+                <span class="whitespace-nowrap">Reports</span>
               </div>
             </button>
 
@@ -534,9 +534,9 @@
         <!-- Accounts Header & Controls -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-              ખાતાવહી & નાણાકીય હિસાબ
-              <span class="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-semibold">Accounts & Day-Book</span>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
+              Accounts & Finance
+              <span class="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-semibold">Day-Book Ledger</span>
             </h1>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">સ્ટુડિયો ટર્નઓવર, રોકડ/ઓનલાઇન કલેક્શન, બાકી ઉઘરાણી (Market Due) અને લાઈવ ડે-બુક રજિસ્ટર.</p>
           </div>
@@ -721,9 +721,9 @@
         <!-- Reports Header & Quick Time Filter Bar -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-              રિપોર્ટ્સ & ફાઇનાન્શિયલ એનાલિટિક્સ
-              <span class="text-xs bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-semibold">Real-time Revenue & GST</span>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
+              Reports
+              <span class="text-xs bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-semibold">રિપોર્ટ્સ & GST</span>
             </h1>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">સ્ટુડિયો આવક, GST કલેક્શન (CGST 9% + SGST 9%), કેટેગરી અનુસાર સેલ્સ અને સંપૂર્ણ ઇન્વોઇસ સ્ટેટમેન્ટ.</p>
           </div>
@@ -1700,8 +1700,8 @@
       const tabMeta = {
         dashboard: { breadcrumb: 'Dashboard Overview', title: 'Studio Dashboard' },
         kanban: { breadcrumb: 'Live Workshop', title: 'Workshop Floor & Stage Tracker' },
-        accounts: { breadcrumb: 'Accounts & Finance', title: 'ખાતાવહી & નાણાકીય હિસાબ (Accounts & Finance)' },
-        reports: { breadcrumb: 'Reports & Revenue', title: 'Financial Analytics & GST' },
+        accounts: { breadcrumb: 'Accounts', title: 'Accounts & Finance' },
+        reports: { breadcrumb: 'Reports', title: 'Reports' },
         crm: { breadcrumb: 'CRM & History', title: 'Vehicle History & Warranty CRM' }
       };
       if (tabMeta[tabName]) {
