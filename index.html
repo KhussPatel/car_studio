@@ -211,7 +211,17 @@
               <span id="navKanbanCount" class="bg-amber-500/20 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold">0</span>
             </button>
 
-            <!-- 3. Reports & Revenue -->
+            <!-- 3. Accounts & Finance -->
+            <button id="navAccounts" onclick="switchTab('accounts'); toggleSidebar(false);" 
+              class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition duration-150 cursor-pointer font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-800/60 border-l-4 border-transparent">
+              <div class="flex items-center gap-3">
+                <i data-lucide="wallet" class="w-4 h-4"></i>
+                <span>Accounts & Finance</span>
+              </div>
+              <span id="navAccountsDueBadge" class="bg-rose-500/20 text-rose-600 dark:text-rose-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold hidden">0</span>
+            </button>
+
+            <!-- 4. Reports & Revenue -->
             <button id="navReports" onclick="switchTab('reports'); toggleSidebar(false);" 
               class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition duration-150 cursor-pointer font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-800/60 border-l-4 border-transparent">
               <div class="flex items-center gap-3">
@@ -220,7 +230,7 @@
               </div>
             </button>
 
-            <!-- 4. CRM & History -->
+            <!-- 5. CRM & History -->
             <button id="navCrm" onclick="switchTab('crm'); toggleSidebar(false);" 
               class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition duration-150 cursor-pointer font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-800/60 border-l-4 border-transparent">
               <div class="flex items-center gap-3">
@@ -338,21 +348,9 @@
           </div>
         </div>
 
-        <!-- 4 Core Metric Cards (KPIs) -->
+        <!-- 4 Operational Workshop Metric Cards (Zero Financial Metrics) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Revenue Card -->
-          <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
-            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-              <span class="text-xs font-semibold uppercase tracking-wider">કુલ અંદાજિત આવક</span>
-              <div class="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
-                <i data-lucide="indian-rupee" class="w-4 h-4"></i>
-              </div>
-            </div>
-            <div class="text-2xl font-black text-slate-900 dark:text-white" id="statRevenue">₹0</div>
-            <div class="mt-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">સક્રિય & ડિલિવર્ડ જોબ્સ આધારિત</div>
-          </div>
-
-          <!-- In-Shop Cars -->
+          <!-- Card 1: In-Shop Active Cars -->
           <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
             <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
               <span class="text-xs font-semibold uppercase tracking-wider">હાલ સ્ટુડિયોમાં (In-Shop)</span>
@@ -362,30 +360,46 @@
             </div>
             <div class="text-2xl font-black text-slate-900 dark:text-white" id="statInShop">0</div>
             <div class="mt-2 text-[11px] text-amber-600 dark:text-amber-400 font-medium">વર્કશોપ ફ્લોર પર સક્રિય વાહનો</div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
           </div>
 
-          <!-- Completed Today -->
+          <!-- Card 2: Today's Gate-In -->
           <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
             <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-              <span class="text-xs font-semibold uppercase tracking-wider">કમ્પ્લીટ થયેલ (Ready / Closed)</span>
+              <span class="text-xs font-semibold uppercase tracking-wider">આજના નવા ઇનટેક (Today's Gate-In)</span>
               <div class="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
+                <i data-lucide="log-in" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-blue-600 dark:text-blue-400" id="statTodayGateIn">0</div>
+            <div class="mt-2 text-[11px] text-blue-600 dark:text-blue-400 font-medium">આજે સ્ટુડિયોમાં આવેલ નવી કાર્સ</div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+          </div>
+
+          <!-- Card 3: Ready for Handover -->
+          <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
+            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">ડિલિવરી માટે તૈયાર (Ready for Handover)</span>
+              <div class="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
                 <i data-lucide="check-circle-2" class="w-4 h-4"></i>
               </div>
             </div>
-            <div class="text-2xl font-black text-slate-900 dark:text-white" id="statCompleted">0</div>
-            <div class="mt-2 text-[11px] text-blue-600 dark:text-blue-400 font-medium">ડિલિવરી રેડી & ડિલિવર્ડ ગેટ પાસ</div>
+            <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400" id="statReadyHandover">0</div>
+            <div class="mt-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">ફાઇનલ QC & ડિલિવરી રેડી કાર્સ</div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
           </div>
 
-          <!-- Advance & Collected -->
+          <!-- Card 4: Showroom Temp ID Cars -->
           <div class="bg-white dark:bg-surface-800/80 border border-slate-200 dark:border-slate-700/70 p-4 rounded-2xl relative overflow-hidden shadow-sm dark:shadow-none transition-colors">
             <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
-              <span class="text-xs font-semibold uppercase tracking-wider">કુલ વસૂલાત (Collected)</span>
+              <span class="text-xs font-semibold uppercase tracking-wider">શોરૂમ ડિલિવરી કાર્સ (Temp ID)</span>
               <div class="p-2 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-xl">
-                <i data-lucide="wallet" class="w-4 h-4"></i>
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
               </div>
             </div>
-            <div class="text-2xl font-black text-purple-600 dark:text-purple-400" id="statAdvance">₹0</div>
-            <div class="mt-2 text-[11px] text-rose-500 font-semibold" id="statPendingDueText">બાકી રકમ: ₹0</div>
+            <div class="text-2xl font-black text-purple-600 dark:text-purple-400" id="statTempCars">0</div>
+            <div class="mt-2 text-[11px] text-purple-600 dark:text-purple-400 font-medium">અનરજિસ્ટર્ડ નવી ગાડીઓ (PPF/Ceramic)</div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
           </div>
         </div>
 
@@ -510,6 +524,193 @@
         <!-- 4 Kanban Stage Columns Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start" id="kanbanColumnsContainer">
           <!-- Dynamically populated with 4 stage columns -->
+        </div>
+
+      </div>
+
+      <!-- ==================== VIEW E: ACCOUNTS & FINANCE ==================== -->
+      <div id="viewAccounts" class="hidden space-y-6">
+        
+        <!-- Accounts Header & Controls -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+              ખાતાવહી & નાણાકીય હિસાબ
+              <span class="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-semibold">Accounts & Day-Book</span>
+            </h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">સ્ટુડિયો ટર્નઓવર, રોકડ/ઓનલાઇન કલેક્શન, બાકી ઉઘરાણી (Market Due) અને લાઈવ ડે-બુક રજિસ્ટર.</p>
+          </div>
+
+          <!-- Quick Filters & CSV Export -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Time Filter Pills -->
+            <div class="flex items-center bg-white dark:bg-surface-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs">
+              <button id="btnFilterAcc_all" onclick="setAccountsDateFilter('all')" class="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition shadow-xs cursor-pointer">All Time</button>
+              <button id="btnFilterAcc_month" onclick="setAccountsDateFilter('month')" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer">This Month</button>
+              <button id="btnFilterAcc_week" onclick="setAccountsDateFilter('week')" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer">This Week</button>
+              <button id="btnFilterAcc_today" onclick="setAccountsDateFilter('today')" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer">Today</button>
+            </div>
+
+            <!-- Export Day-Book as CSV -->
+            <button onclick="exportAccountsCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition cursor-pointer shrink-0">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Export Day-Book</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- A. Financial Summary KPI Cards (Isolated from Floor Dashboard) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: Total Turnover / Billed -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>કુલ ટર્નઓવર / બિલિંગ (Total Billed)</span>
+              <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <i data-lucide="indian-rupee" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight" id="accountsTotalBilled">₹0</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1" id="accountsBilledSub">
+              <span>સક્રિય & ડિલિવર્ડ કુલ બિલિંગ</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
+          </div>
+
+          <!-- Card 2: Received Revenue (Cash/UPI/Card) -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>વસૂલાત થયેલ આવક (Total Collected)</span>
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 tracking-tight" id="accountsTotalReceived">₹0</div>
+            <div class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold" id="accountsReceivedSub">
+              Advance + Final Settled
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+          </div>
+
+          <!-- Card 3: Market Outstanding / Pending Due -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>ગ્રાહકો પાસે બાકી રકમ (Pending Due)</span>
+              <div class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-rose-600 dark:text-rose-400 tracking-tight" id="accountsPendingDue">₹0</div>
+            <div class="text-[11px] text-rose-600 dark:text-rose-400 font-medium" id="accountsPendingDueSub">
+              લેવાની બાકી કુલ ઉઘરાણી
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500"></div>
+          </div>
+
+          <!-- Card 4: Total GST Collected -->
+          <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm dark:shadow-none space-y-2 relative overflow-hidden transition-colors">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span>કુલ GST કલેક્શન (GST 18%)</span>
+              <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                <i data-lucide="receipt" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black font-mono text-purple-600 dark:text-purple-400 tracking-tight" id="accountsTotalGst">₹0</div>
+            <div class="flex items-center gap-1.5 text-[10px] font-mono">
+              <span class="bg-purple-500/10 text-purple-700 dark:text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-semibold" id="accountsCgstDisplay">CGST: ₹0</span>
+              <span class="bg-purple-500/10 text-purple-700 dark:text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-semibold" id="accountsSgstDisplay">SGST: ₹0</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
+          </div>
+        </div>
+
+        <!-- B. Payment Mode Breakdown -->
+        <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm dark:shadow-none space-y-4 transition-colors">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/80 pb-3">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                <i data-lucide="credit-card" class="w-4 h-4 text-amber-500"></i>
+                પેમેન્ટ મોડ મુજબ કલેક્શન બ્રેકડાઉન (Payment Channels Breakdown)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">UPI, રોકડ (Cash), Card અને Bank Transfer દ્વારા જમા થયેલી રકમ</p>
+            </div>
+            <span class="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400" id="accountsPayChannelsTotal">Total: ₹0</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="accountsPayChannelsContainer">
+            <!-- Dynamically populated with payment mode breakdown cards -->
+          </div>
+        </div>
+
+        <!-- C. Live Accounts Register / Day-Book Table -->
+        <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm dark:shadow-none overflow-hidden transition-colors">
+          <!-- Table Controls Header -->
+          <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-surface-900/40">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                <i data-lucide="book-open" class="w-4 h-4 text-amber-500"></i>
+                લાઈવ ડે-બુક & ખાતાવહી રજિસ્ટર (Day-Book Transaction Ledger)
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">દરેક વાહનનું બિલિંગ, એડવાન્સ, પેમેન્ટ મોડ, અને બાકી રકમ ક્વિક સેટલમેન્ટ</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              <!-- Search Table -->
+              <div class="relative w-full sm:w-56">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="accountsSearchInput" oninput="renderAccounts()" placeholder="Search vehicle, customer, inv..."
+                  class="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-amber-500">
+              </div>
+
+              <!-- Payment Mode Filter -->
+              <select id="accountsFilterPaymentMode" onchange="renderAccounts()" 
+                class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <option value="all">All Payment Modes</option>
+                <option value="UPI">UPI / Google Pay</option>
+                <option value="Cash">Cash (રોકડ)</option>
+                <option value="Card">Credit / Debit Card</option>
+                <option value="Bank">Bank Transfer</option>
+              </select>
+
+              <!-- Payment Status Filter -->
+              <select id="accountsFilterStatus" onchange="renderAccounts()" 
+                class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-slate-800 dark:text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500">
+                <option value="all">All Status (બધા)</option>
+                <option value="due">Pending Due Only (બાકી રકમ)</option>
+                <option value="settled">Fully Settled (સંપૂર્ણ ચૂકતે)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Table Content -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-surface-900/90 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700/80">
+                  <th class="p-3.5 pl-5">તારીખ & ઇન્વોઇસ / જોબ</th>
+                  <th class="p-3.5">વાહન / મોડેલ</th>
+                  <th class="p-3.5">કસ્ટમર</th>
+                  <th class="p-3.5 text-right">કુલ બિલ (₹)</th>
+                  <th class="p-3.5 text-right">એડવાન્સ જમા (₹)</th>
+                  <th class="p-3.5">પેમેન્ટ મોડ</th>
+                  <th class="p-3.5 text-right">બાકી રકમ (₹)</th>
+                  <th class="p-3.5 pr-5 text-center">ક્રિયા (Actions)</th>
+                </tr>
+              </thead>
+              <tbody id="accountsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/50 text-xs">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Summary Footer -->
+          <div class="p-4 bg-slate-50 dark:bg-surface-900/60 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between text-xs text-slate-600 dark:text-slate-400 gap-3">
+            <span id="accountsTableCountDisplay">Showing 0 records</span>
+            <div class="flex flex-wrap items-center gap-4 font-mono font-bold">
+              <span>Billed: <span id="accountsTableTotalBilledDisplay" class="text-slate-900 dark:text-white">₹0</span></span>
+              <span>Collected: <span id="accountsTableTotalCollectedDisplay" class="text-emerald-600 dark:text-emerald-400">₹0</span></span>
+              <span>Outstanding Due: <span id="accountsTableTotalDueDisplay" class="text-rose-600 dark:text-rose-400 text-sm">₹0</span></span>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -1054,6 +1255,47 @@
     </div>
   </div>
 
+  <!-- ==================== 5B. QUICK SETTLE DUE MODAL ==================== -->
+  <div id="settleDueModal" class="hidden fixed inset-0 z-50 bg-black/80 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white dark:bg-surface-800 border border-slate-200 dark:border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden my-auto flex flex-col text-slate-800 dark:text-slate-100 transition-colors">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/80 flex items-center justify-between bg-slate-50 dark:bg-surface-900/90">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+            <i data-lucide="wallet" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              બાકી રકમ જમા (Quick Settle Outstanding Due)
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Collect pending payment, update ledger & reconcile balance</p>
+          </div>
+        </div>
+        <button onclick="closeSettleDueModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Dynamic) -->
+      <div class="p-6 space-y-4 text-xs" id="settleDueModalBody">
+        <!-- Populated dynamically via openSettleDueModal(vehicleId) -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 dark:bg-surface-900/95 border-t border-slate-200 dark:border-slate-700 flex items-center justify-end gap-2.5" id="settleDueModalFooter">
+        <button onclick="closeSettleDueModal()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300 transition cursor-pointer">
+          Cancel
+        </button>
+        <button id="btnConfirmSettleDue" onclick="confirmSettleDue()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shadow-lg shadow-emerald-500/20 transition cursor-pointer flex items-center gap-1.5">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Confirm Settlement</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ==================== 6. PRINTABLE TAX INVOICE & GATE PASS (Hidden on screen, shown in Print) ==================== -->
   <div id="printableInvoice" class="hidden bg-white text-slate-900 font-sans p-8 leading-tight">
     <!-- Populated dynamically via printInvoiceGatePass() -->
@@ -1420,12 +1662,14 @@
       const views = {
         dashboard: document.getElementById('viewDashboard'),
         kanban: document.getElementById('viewKanban'),
+        accounts: document.getElementById('viewAccounts'),
         reports: document.getElementById('viewReports'),
         crm: document.getElementById('viewCrm')
       };
       const navs = {
         dashboard: document.getElementById('navDashboard'),
         kanban: document.getElementById('navKanban'),
+        accounts: document.getElementById('navAccounts'),
         reports: document.getElementById('navReports'),
         crm: document.getElementById('navCrm')
       };
@@ -1456,6 +1700,7 @@
       const tabMeta = {
         dashboard: { breadcrumb: 'Dashboard Overview', title: 'Studio Dashboard' },
         kanban: { breadcrumb: 'Live Workshop', title: 'Workshop Floor & Stage Tracker' },
+        accounts: { breadcrumb: 'Accounts & Finance', title: 'ખાતાવહી & નાણાકીય હિસાબ (Accounts & Finance)' },
         reports: { breadcrumb: 'Reports & Revenue', title: 'Financial Analytics & GST' },
         crm: { breadcrumb: 'CRM & History', title: 'Vehicle History & Warranty CRM' }
       };
@@ -1466,6 +1711,8 @@
 
       if (tabName === 'kanban') {
         renderKanban();
+      } else if (tabName === 'accounts') {
+        renderAccounts();
       } else if (tabName === 'reports') {
         renderReports();
       } else if (tabName === 'crm') {
@@ -1659,12 +1906,27 @@
         });
       }
 
-      // Update Top KPI Cards
-      document.getElementById('statRevenue').textContent = `₹${totalRev.toLocaleString('en-IN')}`;
-      document.getElementById('statAdvance').textContent = `₹${totalCollected.toLocaleString('en-IN')}`;
-      document.getElementById('statInShop').textContent = inShopCount;
-      document.getElementById('statCompleted').textContent = completedCount;
-      document.getElementById('statPendingDueText').textContent = `બાકી રકમ: ₹${pendingDue.toLocaleString('en-IN')}`;
+      // Calculate Operational Workshop KPIs
+      const todayStr = now.toISOString().slice(0, 10);
+      const todayGateInCount = activeVehicles.filter(car => {
+        const d = car.createdAt ? car.createdAt.slice(0, 10) : '';
+        return d === todayStr;
+      }).length;
+      const readyHandoverCount = stageCounts[3];
+      const tempCarsCount = activeVehicles.filter(car => car.isNewCar || car.tempId).length;
+
+      // Update 4 Operational Workshop KPI Cards (Zero Financial Metrics)
+      const elInShop = document.getElementById('statInShop');
+      if (elInShop) elInShop.textContent = inShopCount;
+
+      const elTodayGateIn = document.getElementById('statTodayGateIn');
+      if (elTodayGateIn) elTodayGateIn.textContent = todayGateInCount;
+
+      const elReadyHandover = document.getElementById('statReadyHandover');
+      if (elReadyHandover) elReadyHandover.textContent = readyHandoverCount;
+
+      const elTempCars = document.getElementById('statTempCars');
+      if (elTempCars) elTempCars.textContent = tempCarsCount;
 
       // Update Stage Progress Bar & Cards
       updateStageProgressBar(activeVehicles, stageCounts);
@@ -1988,8 +2250,10 @@
 
       renderDashboard();
       renderKanban();
+      renderAccounts();
       renderReports();
       renderCrm();
+      updateSidebarDueBadge(vehicles);
     }
 
     // ==================== 6. INSPECTION & DETAILS MODAL LOGIC ====================
@@ -4061,6 +4325,560 @@ Thank you for visiting Apex Auto Studio! 📞 98240 12345`;
       }
 
       lucide.createIcons();
+    }
+
+    // ==================== 11. ACCOUNTS & FINANCE / DAY-BOOK CONTROLLER ====================
+    let currentAccountsDateFilter = 'all';
+    let currentSettleVehicleId = null;
+
+    function setAccountsDateFilter(filter) {
+      currentAccountsDateFilter = filter;
+      const filters = ['all', 'month', 'week', 'today'];
+      filters.forEach(f => {
+        const btn = document.getElementById(`btnFilterAcc_${f}`);
+        if (btn) {
+          if (f === filter) {
+            btn.className = 'px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition shadow-xs cursor-pointer';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer';
+          }
+        }
+      });
+      renderAccounts();
+    }
+
+    function updateSidebarDueBadge(vehicles) {
+      if (!vehicles) {
+        vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      }
+      let countWithDue = 0;
+      vehicles.forEach(car => {
+        const b = car.billingDetails;
+        const bill = b ? (b.grandTotal !== undefined ? Number(b.grandTotal) : Number(car.amountTotal || 0)) : Number(car.amountTotal || 0);
+        const recv = b ? ((b.advancePaid || 0) + (b.finalPaid || 0)) : Number(car.amountAdvance || 0);
+        const due = b ? (b.balanceRemaining !== undefined ? Number(b.balanceRemaining) : Math.max(0, bill - recv)) : Math.max(0, bill - recv);
+        if (due > 0) countWithDue++;
+      });
+
+      const badge = document.getElementById('navAccountsDueBadge');
+      if (badge) {
+        if (countWithDue > 0) {
+          badge.textContent = `${countWithDue} due`;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    }
+
+    function renderAccounts() {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      updateSidebarDueBadge(vehicles);
+
+      // Apply Date Filter
+      const dateFiltered = filterVehiclesByDate(vehicles, currentAccountsDateFilter);
+
+      // 1. Calculate Aggregate Financial KPIs
+      let totalBilled = 0;
+      let totalReceived = 0;
+      let totalPendingDue = 0;
+      let totalGst = 0;
+      let totalCgst = 0;
+      let totalSgst = 0;
+
+      // Track Payment Channels (UPI, Cash, Card, Bank)
+      const channelData = {
+        upi: { name: 'UPI / Google Pay', count: 0, amount: 0, icon: 'qr-code', color: 'blue' },
+        cash: { name: 'Cash (રોકડ)', count: 0, amount: 0, icon: 'banknote', color: 'emerald' },
+        card: { name: 'Credit / Debit Card', count: 0, amount: 0, icon: 'credit-card', color: 'purple' },
+        bank: { name: 'Bank Transfer (NEFT)', count: 0, amount: 0, icon: 'building-2', color: 'amber' }
+      };
+
+      function detectChannel(modeStr) {
+        const s = (modeStr || '').toLowerCase();
+        if (s.includes('cash') || s.includes('રોકડ')) return 'cash';
+        if (s.includes('card') || s.includes('pos')) return 'card';
+        if (s.includes('bank') || s.includes('transfer') || s.includes('neft') || s.includes('rtgs') || s.includes('imps')) return 'bank';
+        return 'upi'; // default
+      }
+
+      dateFiltered.forEach(car => {
+        const b = car.billingDetails;
+        let bill = 0;
+        let recv = 0;
+        let due = 0;
+
+        if (b) {
+          bill = b.grandTotal !== undefined ? Number(b.grandTotal) : Number(car.amountTotal || 0);
+          recv = (b.advancePaid || 0) + (b.finalPaid || 0);
+          due = b.balanceRemaining !== undefined ? Number(b.balanceRemaining) : Math.max(0, bill - recv);
+          
+          totalGst += ((b.cgst || 0) + (b.sgst || 0));
+          totalCgst += (b.cgst || 0);
+          totalSgst += (b.sgst || 0);
+
+          const chKey = detectChannel(b.paymentMode);
+          channelData[chKey].amount += recv;
+          if (recv > 0) channelData[chKey].count++;
+        } else {
+          // Active In-shop car
+          bill = Number(car.amountTotal || 0);
+          recv = Number(car.amountAdvance || 0);
+          due = Math.max(0, bill - recv);
+
+          const chKey = detectChannel(car.advancePaymentMode || 'UPI');
+          channelData[chKey].amount += recv;
+          if (recv > 0) channelData[chKey].count++;
+        }
+
+        totalBilled += bill;
+        totalReceived += recv;
+        totalPendingDue += due;
+      });
+
+      // Update Summary KPI Cards
+      const elBilled = document.getElementById('accountsTotalBilled');
+      if (elBilled) elBilled.textContent = `₹${totalBilled.toLocaleString('en-IN')}`;
+
+      const elRecv = document.getElementById('accountsTotalReceived');
+      if (elRecv) elRecv.textContent = `₹${totalReceived.toLocaleString('en-IN')}`;
+
+      const elDue = document.getElementById('accountsPendingDue');
+      if (elDue) elDue.textContent = `₹${totalPendingDue.toLocaleString('en-IN')}`;
+
+      const elGst = document.getElementById('accountsTotalGst');
+      if (elGst) elGst.textContent = `₹${totalGst.toLocaleString('en-IN')}`;
+
+      const elCgst = document.getElementById('accountsCgstDisplay');
+      if (elCgst) elCgst.textContent = `CGST: ₹${totalCgst.toLocaleString('en-IN')}`;
+
+      const elSgst = document.getElementById('accountsSgstDisplay');
+      if (elSgst) elSgst.textContent = `SGST: ₹${totalSgst.toLocaleString('en-IN')}`;
+
+      // Update Payment Channels Container
+      const payTotalEl = document.getElementById('accountsPayChannelsTotal');
+      if (payTotalEl) payTotalEl.textContent = `Total Received: ₹${totalReceived.toLocaleString('en-IN')}`;
+
+      const channelsContainer = document.getElementById('accountsPayChannelsContainer');
+      if (channelsContainer) {
+        const totalCollectedForPct = totalReceived || 1;
+        channelsContainer.innerHTML = Object.keys(channelData).map(key => {
+          const ch = channelData[key];
+          const pct = Math.round((ch.amount / totalCollectedForPct) * 100);
+          return `
+            <div class="p-4 bg-slate-50 dark:bg-surface-900/60 rounded-xl border border-slate-200 dark:border-slate-700/70 space-y-2">
+              <div class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="${ch.icon}" class="w-4 h-4 text-${ch.color}-500"></i>
+                  <span>${ch.name}</span>
+                </span>
+                <span class="text-[10px] font-mono font-bold bg-${ch.color}-500/10 text-${ch.color}-600 dark:text-${ch.color}-400 px-1.5 py-0.5 rounded border border-${ch.color}-500/20">${pct}%</span>
+              </div>
+              <div class="text-lg font-black font-mono text-slate-900 dark:text-white">₹${ch.amount.toLocaleString('en-IN')}</div>
+              <div class="flex items-center justify-between text-[10px] text-slate-400">
+                <span>${ch.count} transactions</span>
+                <span class="font-mono">${pct}% share</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-${ch.color}-500 h-full rounded-full transition-all duration-300" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Render Day-Book Table with Search & Dropdown Filters
+      const searchInput = document.getElementById('accountsSearchInput');
+      const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+      const filterMode = document.getElementById('accountsFilterPaymentMode')?.value || 'all';
+      const filterStatus = document.getElementById('accountsFilterStatus')?.value || 'all';
+
+      let tableVehicles = dateFiltered.filter(car => {
+        const b = car.billingDetails;
+        const bill = b ? (b.grandTotal !== undefined ? Number(b.grandTotal) : Number(car.amountTotal || 0)) : Number(car.amountTotal || 0);
+        const recv = b ? ((b.advancePaid || 0) + (b.finalPaid || 0)) : Number(car.amountAdvance || 0);
+        const due = b ? (b.balanceRemaining !== undefined ? Number(b.balanceRemaining) : Math.max(0, bill - recv)) : Math.max(0, bill - recv);
+        const mode = b ? (b.paymentMode || '') : (car.advancePaymentMode || 'UPI / Advance');
+
+        // Filter by status
+        if (filterStatus === 'due' && due <= 0) return false;
+        if (filterStatus === 'settled' && due > 0) return false;
+
+        // Filter by payment mode
+        if (filterMode !== 'all') {
+          const chKey = detectChannel(mode);
+          if (chKey !== filterMode.toLowerCase()) return false;
+        }
+
+        // Filter by search query
+        if (query) {
+          const matchReg = (car.regNo || '').toLowerCase().includes(query);
+          const matchTemp = (car.tempId || '').toLowerCase().includes(query);
+          const matchName = (car.customerName || '').toLowerCase().includes(query);
+          const matchPhone = (car.customerPhone || '').toLowerCase().includes(query);
+          const matchModel = (car.model || '').toLowerCase().includes(query);
+          const matchInv = (car.invoiceNo || '').toLowerCase().includes(query);
+          const matchJob = (car.id || '').toLowerCase().includes(query);
+          if (!matchReg && !matchTemp && !matchName && !matchPhone && !matchModel && !matchInv && !matchJob) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      const tbody = document.getElementById('accountsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let tableTotalBilled = 0;
+      let tableTotalRecv = 0;
+      let tableTotalDue = 0;
+
+      if (tableVehicles.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="p-8 text-center text-slate-400 dark:text-slate-500">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <i data-lucide="book-x" class="w-8 h-8 text-slate-300 dark:text-slate-600"></i>
+                <span class="text-xs font-semibold">ખાતાવહી રજિસ્ટરમાં કોઈ મેળ ખાતા રેકોર્ડ્સ મળ્યા નથી.</span>
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        tableVehicles.forEach(car => {
+          const b = car.billingDetails;
+          const bill = b ? (b.grandTotal !== undefined ? Number(b.grandTotal) : Number(car.amountTotal || 0)) : Number(car.amountTotal || 0);
+          const recv = b ? ((b.advancePaid || 0) + (b.finalPaid || 0)) : Number(car.amountAdvance || 0);
+          const due = b ? (b.balanceRemaining !== undefined ? Number(b.balanceRemaining) : Math.max(0, bill - recv)) : Math.max(0, bill - recv);
+          const mode = b ? (b.paymentMode || 'UPI / Google Pay') : (car.advancePaymentMode || 'UPI / Advance');
+
+          tableTotalBilled += bill;
+          tableTotalRecv += recv;
+          tableTotalDue += due;
+
+          const dateStr = car.deliveredAt || car.createdAt || new Date().toISOString();
+          const formattedDate = new Date(dateStr).toLocaleDateString('gu-IN', {
+            day: 'numeric', month: 'short', year: 'numeric'
+          });
+
+          const plateBadge = car.isNewCar
+            ? `<span class="inline-flex items-center gap-1 font-mono font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/15 border border-purple-200 dark:border-purple-500/30 px-2 py-0.5 rounded text-[11px]"><i data-lucide="sparkles" class="w-3 h-3 text-purple-500"></i> ${car.tempId}</span>`
+            : `<span class="font-mono font-bold text-amber-700 dark:text-amber-400 text-xs">${car.regNo}</span>`;
+
+          const idBadge = car.invoiceNo
+            ? `<div class="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-[11px]">${car.invoiceNo}</div>`
+            : `<div class="font-mono font-bold text-slate-500 dark:text-slate-400 text-[11px]">${car.id}</div>`;
+
+          // Mode Badge
+          const chKey = detectChannel(mode);
+          const modeColorMap = {
+            upi: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20',
+            cash: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
+            card: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20',
+            bank: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
+          };
+          const modeBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold border ${modeColorMap[chKey]}">${mode}</span>`;
+
+          // Status / Due Display
+          const dueDisplay = due > 0
+            ? `<div>
+                 <span class="font-mono font-bold text-rose-600 dark:text-rose-400 text-xs">₹${due.toLocaleString('en-IN')}</span>
+                 <div class="text-[9px] text-rose-500 font-semibold uppercase tracking-wider">Unpaid Due</div>
+               </div>`
+            : `<div>
+                 <span class="inline-flex items-center gap-1 font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-2 py-0.5 rounded text-[10px]">
+                   <i data-lucide="check" class="w-3 h-3"></i> Settled
+                 </span>
+               </div>`;
+
+          // Action Button
+          let actionBtn = '';
+          if (due > 0) {
+            actionBtn = `
+              <button onclick="openSettleDueModal('${car.id}')" 
+                class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-[11px] inline-flex items-center gap-1 shadow-sm transition cursor-pointer" title="Collect balance & settle">
+                <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+                <span>Settle Due ➔</span>
+              </button>
+            `;
+          } else if (car.isDelivered) {
+            actionBtn = `
+              <button onclick="printInvoiceGatePass('${car.id}')" 
+                class="px-2.5 py-1 bg-slate-100 dark:bg-surface-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600/50 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition cursor-pointer" title="Print Tax Invoice & Gate Pass">
+                <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-500"></i>
+                <span>Bill Print</span>
+              </button>
+            `;
+          } else {
+            actionBtn = `
+              <button onclick="openInspectionModal('${car.id}')" 
+                class="px-2 py-1 bg-slate-100 dark:bg-surface-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600/50 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition cursor-pointer" title="View in bay">
+                <i data-lucide="scan" class="w-3 h-3 text-amber-500"></i>
+                <span>In Bay</span>
+              </button>
+            `;
+          }
+
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50 dark:hover:bg-surface-700/30 transition";
+          tr.innerHTML = `
+            <td class="p-3.5 pl-5">
+              <div class="text-[11px] text-slate-500 dark:text-slate-400">${formattedDate}</div>
+              ${idBadge}
+            </td>
+            <td class="p-3.5">
+              ${plateBadge}
+              <div class="text-[11px] font-semibold text-slate-900 dark:text-white mt-0.5">${car.model}</div>
+              <div class="text-[10px] text-slate-400">${car.category || ''}</div>
+            </td>
+            <td class="p-3.5">
+              <div class="font-medium text-slate-900 dark:text-white">${car.customerName}</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">${car.customerPhone}</div>
+            </td>
+            <td class="p-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">
+              ₹${bill.toLocaleString('en-IN')}
+              ${b && b.isGst ? '<div class="text-[9px] text-purple-600 dark:text-purple-400 font-normal">Incl. 18% GST</div>' : ''}
+            </td>
+            <td class="p-3.5 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              ₹${recv.toLocaleString('en-IN')}
+              <div class="text-[9px] text-slate-400 font-normal">${b ? (due > 0 ? 'Partial Settled' : 'Full Paid') : 'Advance'}</div>
+            </td>
+            <td class="p-3.5">${modeBadge}</td>
+            <td class="p-3.5 text-right">${dueDisplay}</td>
+            <td class="p-3.5 pr-5 text-center">${actionBtn}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Update Table Footer
+      const elCount = document.getElementById('accountsTableCountDisplay');
+      if (elCount) elCount.textContent = `Showing ${tableVehicles.length} of ${dateFiltered.length} records`;
+
+      const elTblBilled = document.getElementById('accountsTableTotalBilledDisplay');
+      if (elTblBilled) elTblBilled.textContent = `₹${tableTotalBilled.toLocaleString('en-IN')}`;
+
+      const elTblRecv = document.getElementById('accountsTableTotalCollectedDisplay');
+      if (elTblRecv) elTblRecv.textContent = `₹${tableTotalRecv.toLocaleString('en-IN')}`;
+
+      const elTblDue = document.getElementById('accountsTableTotalDueDisplay');
+      if (elTblDue) elTblDue.textContent = `₹${tableTotalDue.toLocaleString('en-IN')}`;
+
+      lucide.createIcons();
+    }
+
+    // Modal Controller: Open Quick Settle Modal
+    function openSettleDueModal(vehicleId) {
+      currentSettleVehicleId = vehicleId;
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === vehicleId);
+      if (!car) return;
+
+      const b = car.billingDetails;
+      const total = b ? (b.grandTotal !== undefined ? Number(b.grandTotal) : Number(car.amountTotal || 0)) : Number(car.amountTotal || 0);
+      const paid = b ? ((b.advancePaid || 0) + (b.finalPaid || 0)) : Number(car.amountAdvance || 0);
+      const due = b ? (b.balanceRemaining !== undefined ? Number(b.balanceRemaining) : Math.max(0, total - paid)) : Math.max(0, total - paid);
+
+      const bodyEl = document.getElementById('settleDueModalBody');
+      if (!bodyEl) return;
+
+      const plateHtml = car.isNewCar
+        ? `<span class="inline-flex items-center gap-1 font-mono font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/15 border border-purple-200 dark:border-purple-500/30 px-2 py-0.5 rounded text-xs"><i data-lucide="sparkles" class="w-3 h-3 text-purple-500"></i> ${car.tempId}</span>`
+        : `<span class="font-mono font-bold text-amber-700 dark:text-amber-400 text-xs px-2 py-0.5 bg-amber-50 dark:bg-amber-500/10 rounded border border-amber-200 dark:border-amber-500/30">${car.regNo}</span>`;
+
+      bodyEl.innerHTML = `
+        <!-- Vehicle & Customer Header Banner -->
+        <div class="p-3.5 bg-slate-50 dark:bg-surface-900/60 rounded-xl border border-slate-200 dark:border-slate-700/80 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              ${plateHtml}
+              <span class="font-bold text-slate-900 dark:text-white text-xs">${car.model}</span>
+            </div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+              ${car.customerName} • <span class="font-mono">${car.customerPhone}</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 block uppercase tracking-wider">Job ID</span>
+            <span class="font-mono font-bold text-xs text-slate-700 dark:text-slate-300">${car.id}</span>
+          </div>
+        </div>
+
+        <!-- Outstanding Balance Summary Box -->
+        <div class="grid grid-cols-3 gap-2.5 p-3.5 bg-rose-500/5 dark:bg-surface-900 border border-rose-500/20 rounded-xl text-center">
+          <div>
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">કુલ બિલ (Total)</span>
+            <span class="font-mono font-bold text-xs text-slate-900 dark:text-white">₹${total.toLocaleString('en-IN')}</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">જમા થયેલ (Paid)</span>
+            <span class="font-mono font-bold text-xs text-emerald-600 dark:text-emerald-400">₹${paid.toLocaleString('en-IN')}</span>
+          </div>
+          <div>
+            <span class="text-[10px] text-rose-500 block font-semibold">બાકી રકમ (Due)</span>
+            <span class="font-mono font-bold text-sm text-rose-600 dark:text-rose-400" id="settleModalPendingDueDisplay">₹${due.toLocaleString('en-IN')}</span>
+          </div>
+        </div>
+
+        <!-- Settle Input Form -->
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+              જમા કરવાની રકમ (Collection Amount in ₹) *
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
+              <input type="number" id="settleAmountInput" value="${due}" min="1" max="${due}"
+                class="w-full pl-8 pr-3 py-2 bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-bold font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
+              <span>Enter amount received now</span>
+              <button type="button" onclick="document.getElementById('settleAmountInput').value = ${due}" class="text-amber-600 dark:text-amber-400 hover:underline font-semibold cursor-pointer">
+                Fill Full Due (₹${due.toLocaleString('en-IN')})
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                પેમેન્ટ મોડ (Payment Mode) *
+              </label>
+              <select id="settlePaymentModeInput" 
+                class="w-full px-3 py-2 bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-600 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="UPI / Google Pay">UPI / Google Pay / PhonePe</option>
+                <option value="Cash">Cash (રોકડ)</option>
+                <option value="Credit/Debit Card">Credit/Debit Card (POS)</option>
+                <option value="Bank Transfer">Bank Transfer (NEFT/RTGS)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                રેફરન્સ / નોંધ (Ref / Note)
+              </label>
+              <input type="text" id="settleReferenceInput" placeholder="UTR #, Receipt #, or Note"
+                class="w-full px-3 py-2 bg-white dark:bg-surface-800 border border-slate-300 dark:border-slate-600 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('settleDueModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeSettleDueModal() {
+      const modal = document.getElementById('settleDueModal');
+      if (modal) modal.classList.add('hidden');
+      currentSettleVehicleId = null;
+    }
+
+    function confirmSettleDue() {
+      if (!currentSettleVehicleId) return;
+
+      const amountInput = document.getElementById('settleAmountInput');
+      const settleAmount = Number(amountInput ? amountInput.value : 0);
+      const paymentMode = document.getElementById('settlePaymentModeInput')?.value || 'UPI / Google Pay';
+      const refNote = document.getElementById('settleReferenceInput')?.value.trim() || '';
+
+      if (!settleAmount || settleAmount <= 0) {
+        alert('કૃપા કરીને માન્ય રકમ દાખલ કરો (Please enter a valid amount greater than ₹0).');
+        return;
+      }
+
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const car = vehicles.find(v => v.id === currentSettleVehicleId);
+      if (!car) return;
+
+      if (car.billingDetails) {
+        car.billingDetails.finalPaid = (car.billingDetails.finalPaid || 0) + settleAmount;
+        car.billingDetails.balanceRemaining = Math.max(0, (car.billingDetails.balanceRemaining || 0) - settleAmount);
+        car.billingDetails.paymentMode = paymentMode;
+        if (!car.billingDetails.settlements) car.billingDetails.settlements = [];
+        car.billingDetails.settlements.push({
+          amount: settleAmount,
+          mode: paymentMode,
+          ref: refNote,
+          settledAt: new Date().toISOString()
+        });
+      } else {
+        // Active vehicle in bay receiving advance or pre-payment
+        car.amountAdvance = (car.amountAdvance || 0) + settleAmount;
+        car.advancePaymentMode = paymentMode;
+        if (!car.settlements) car.settlements = [];
+        car.settlements.push({
+          amount: settleAmount,
+          mode: paymentMode,
+          ref: refNote,
+          settledAt: new Date().toISOString()
+        });
+      }
+
+      localStorage.setItem('apex_vehicles', JSON.stringify(vehicles));
+      closeSettleDueModal();
+      renderAll();
+    }
+
+    // Export Accounts Day-Book as CSV
+    function exportAccountsCSV() {
+      const vehicles = JSON.parse(localStorage.getItem('apex_vehicles')) || [];
+      const dateFiltered = filterVehiclesByDate(vehicles, currentAccountsDateFilter);
+
+      const headers = [
+        "Date",
+        "Invoice / Job No",
+        "Registration / Temp ID",
+        "Vehicle Model",
+        "Customer Name",
+        "Customer Phone",
+        "Service",
+        "Total Billed (INR)",
+        "Received Amount (INR)",
+        "Pending Due (INR)",
+        "Payment Mode",
+        "Payment Status"
+      ];
+
+      const rows = dateFiltered.map(car => {
+        const b = car.billingDetails;
+        const dateStr = car.deliveredAt ? car.deliveredAt.slice(0, 10) : (car.createdAt ? car.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10));
+        const reg = car.regNo || car.tempId || '-';
+        const bill = b ? (b.grandTotal !== undefined ? Number(b.grandTotal) : Number(car.amountTotal || 0)) : Number(car.amountTotal || 0);
+        const recv = b ? ((b.advancePaid || 0) + (b.finalPaid || 0)) : Number(car.amountAdvance || 0);
+        const due = b ? (b.balanceRemaining !== undefined ? Number(b.balanceRemaining) : Math.max(0, bill - recv)) : Math.max(0, bill - recv);
+        const mode = b ? (b.paymentMode || 'UPI / Google Pay') : (car.advancePaymentMode || 'UPI / Advance');
+        const status = due > 0 ? "Pending Due" : "Fully Settled";
+
+        return [
+          dateStr,
+          car.invoiceNo || car.id,
+          reg,
+          car.model,
+          car.customerName,
+          car.customerPhone,
+          car.service,
+          bill,
+          recv,
+          due,
+          mode,
+          status
+        ].map(val => `"${String(val).replace(/"/g, '""')}"`).join(",");
+      });
+
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\r\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const dateTag = new Date().toISOString().slice(0, 10);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Apex_Auto_Studio_Accounts_DayBook_${dateTag}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
 
     // Start App with persisted theme & auth check
